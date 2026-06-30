@@ -1,22 +1,9 @@
 <!DOCTYPE html>
-<html>
-
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title></title>
-</head>
-
-<body>
-  
-</body>
-
-</html><!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>منصة تَلَقِّي | بوابة التلاوة والتحكم الموحدة</title>
+    <title>منصة تَلَقِي | بوابة التلاوة والتحكم الموحدة</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -24,11 +11,11 @@
             --bg-card: #ffffff;
             --text-main: #0f172a;
             --text-muted: #64748b;
-            /* تم ضبط درجة اللون الأزرق لتطابق اللوجو */
+            /* اللون الأزرق المطابق للوجو الخاص بك */
             --primary: #2eb4ff; 
             --primary-hover: #1ca3ed;
             --border: #e2e8f0;
-            --success: #16a34a;
+            --success: #10b981;
             --danger: #ef4444;
         }
 
@@ -61,6 +48,7 @@
             align-items: center;
         }
 
+        /* قواعد التجاوب لشاشات التابلت */
         @media (max-width: 990px) {
             .portal-wrapper {
                 grid-template-columns: 1fr;
@@ -70,7 +58,7 @@
             .branding-box { text-align: center; align-items: center; }
         }
 
-        /* ----- قواعد التجاوب الدقيقة مع شاشات الهواتف الذكية (Mobile) ----- */
+        /* قواعد التجاوب المثالية لشاشات الموبايل */
         @media (max-width: 768px) {
             .portal-wrapper {
                 grid-template-columns: 1fr;
@@ -178,12 +166,17 @@
             margin-bottom: 10px;
         }
 
+        .required-star {
+            color: var(--danger);
+            margin-right: 4px;
+        }
+
         .input-field {
             width: 100%;
-            padding: 16px 18px;
+            padding: 15px 16px;
             background-color: var(--bg-main);
             border: 1.5px solid var(--border);
-            border-radius: 14px;
+            border-radius: 12px;
             font-size: 15px;
             font-weight: 500;
             color: var(--text-main);
@@ -192,13 +185,18 @@
             text-align: center;
         }
 
+        /* ترك محاذاة البيانات في الفورم الجديد لليمين */
+        .text-right {
+            text-align: right !important;
+        }
+
         .input-field:focus {
             border-color: var(--primary);
             background-color: var(--bg-card);
             box-shadow: 0 0 0 4px rgba(46, 180, 255, 0.15);
         }
 
-        /* 👑 كونسول القوائم المنسدلة المخصصة بنمط الأبل آب الفاخر */
+        /* كونسول القوائم المنسدلة المخصصة */
         .custom-select-wrapper {
             position: relative;
             width: 100%;
@@ -207,30 +205,31 @@
 
         .custom-select-trigger {
             width: 100%;
-            padding: 16px 18px;
+            padding: 15px 16px;
             background-color: var(--bg-main);
             border: 1.5px solid var(--border);
-            border-radius: 14px;
+            border-radius: 12px;
             font-size: 15px;
             font-weight: 500;
-            color: var(--text-main);
-            text-align: center;
+            color: var(--text-muted);
+            text-align: right;
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
-            position: relative;
             transition: all 0.2s ease;
+            white-space: normal;
+            line-height: 1.5;
         }
         .custom-select-trigger::after {
             content: '';
-            position: absolute;
-            left: 18px;
             width: 14px;
             height: 14px;
             background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>");
             background-size: contain;
             background-repeat: no-repeat;
             transition: transform 0.25s ease;
+            flex-shrink: 0;
+            margin-right: 10px;
         }
 
         .custom-select-wrapper.open .custom-select-trigger {
@@ -249,7 +248,7 @@
             right: 0;
             background-color: rgba(255, 255, 255, 0.98);
             border: 1px solid var(--border);
-            border-radius: 14px;
+            border-radius: 12px;
             box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
             z-index: 1500;
             opacity: 0;
@@ -266,13 +265,14 @@
         }
 
         .custom-option-item {
-            padding: 14px 16px;
+            padding: 12px 14px;
             font-size: 14px;
             font-weight: 700;
             color: var(--text-main);
-            text-align: center;
-            border-radius: 10px;
+            text-align: right;
+            border-radius: 8px;
             transition: all 0.2s ease;
+            margin-bottom: 2px;
         }
         .custom-option-item:hover {
             background-color: rgba(46, 180, 255, 0.08);
@@ -289,7 +289,7 @@
             background-color: var(--primary);
             color: white;
             border: none;
-            border-radius: 14px;
+            border-radius: 12px;
             font-size: 17px;
             font-weight: 800;
             cursor: pointer;
@@ -321,7 +321,7 @@
             background-color: var(--bg-card);
             color: var(--text-main);
             border: 1.5px solid var(--border);
-            border-radius: 14px;
+            border-radius: 12px;
             font-size: 15px;
             font-weight: 700;
             cursor: pointer;
@@ -358,14 +358,14 @@
             background-color: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: 20px;
-            padding: 35px;
+            padding: 30px;
             width: 100%;
-            max-width: 430px;
+            max-width: 400px;
             text-align: center;
             box-shadow: 0 20px 50px rgba(0,0,0,0.1);
         }
-        .modal-content h3 { font-size: 24px; font-weight: 800; color: var(--success); margin-bottom: 10px; }
-        .modal-content p { font-size: 15px; color: var(--text-muted); line-height: 1.8; font-weight: 500; margin-bottom: 25px; }
+        .modal-content h3 { font-size: 22px; font-weight: 800; color: var(--success); margin-bottom: 10px; }
+        .modal-content p { font-size: 15px; color: var(--text-muted); line-height: 1.7; font-weight: 500; margin-bottom: 25px; }
 
         .btn-modal-close {
             width: 100%;
@@ -384,7 +384,7 @@
         }
 
         footer {
-            padding: 25px;
+            padding: 20px;
             text-align: center;
             font-size: 14px;
             font-weight: 500;
@@ -398,8 +398,8 @@
 
     <div class="portal-wrapper">
         <div class="branding-box">
-            <h1 class="app-title">تَلَقِّي</h1>
-            <div class="app-tagline">منصتك الرقمية الميسرة لإتقان تلاوة ومخارج حروف القرآن الكريم</div>
+            <h1 class="app-title">تَلَقِي</h1>
+            <div class="app-tagline">تعلم اللغه العربيه والتجويد للناطقين وغير الناطقين بالعربيه </div>
             <p class="app-desc">بيئة تعليمية تفاعلية ميسرة، تتيح لك قراءة السور، واستكشاف أحكام التجويد بمجرد الضغط على الكلمة، مع نظام اختبارات متكامل لقياس مستوى ضبطك الحقيقي.</p>
         </div>
 
@@ -407,13 +407,13 @@
             <div class="portal-tabs">
                 <button class="tab-btn active" id="tab-interactive" onclick="switchPanel('interactive')">التجويد التفاعلي</button>
                 <button class="tab-btn" id="tab-teachers" onclick="switchPanel('teachers')">بوابة المعلمين</button>
-                <button class="tab-btn" id="tab-request" onclick="switchPanel('request')">طلب اشتراك</button>
+                <button class="tab-btn" id="tab-request" onclick="switchPanel('request')">طلب حصه او اشتراك</button>
             </div>
 
             <div class="form-panel active" id="panel-interactive">
                 <div class="form-group">
-                    <label for="student-passcode">رمز دخول الطلاب والمقررات</label>
-                    <input type="text" id="student-passcode" class="input-field" placeholder="اكتب رمز الطلاب هنا..." style="text-transform: uppercase;">
+                    <label for="student-passcode"></label>رمز دخول </label>
+                    <input type="text" id="student-passcode" class="input-field" placeholder="اكتب رمز  هنا..." style="text-transform: uppercase;">
                     <div class="error-text" id="student-error">رمز الدخول غير صحيح، يرجى المحاولة مرة أخرى.</div>
                 </div>
                 <button class="btn-submit" onclick="handleStudentLogin()">دخول آمن</button>
@@ -426,7 +426,7 @@
 
             <div class="form-panel" id="panel-teachers">
                 <div class="form-group">
-                    <label for="teacher-passcode">الرمز التوثيقي المخصص للمعلمين</label>
+                    <label for="teacher-passcode">الرمز  المخصص للمعلمين</label>
                     <input type="text" id="teacher-passcode" class="input-field" placeholder="اكتب الرمز المخصص للمعلمين..." style="text-transform: uppercase;">
                     <div class="error-text" id="teacher-error">رمز المعلم غير صحيح، يرجى التحقق وإعادة المحاولة.</div>
                 </div>
@@ -434,43 +434,38 @@
             </div>
 
             <div class="form-panel" id="panel-request">
-                <form id="google-enrollment-form" action="https://docs.google.com/forms/d/e/1FAIpQLSfkukgSshiJxZspSlQatZmB3eWcmlfawJBtqcKdCuZC8z4dOA/formResponse" method="POST" target="hidden_iframe_bridge" onsubmit="handleFormSubmitSuccess(event)">
-                    <div class="form-group">
-                        <label>الاسم الكامل لطالب الاشتراك</label>
-                        <input type="text" name="entry.2133028686" id="field-name" class="input-field" placeholder="اكتب اسمك الكامل هنا..." required style="text-align: right;">
-                    </div>
-                    <div class="form-group">
-                        <label>رقم الواتساب للتواصل وإرسال الكود</label>
-                        <input type="tel" name="entry.597407262" id="field-phone" class="input-field" placeholder="05xxxxxxxx" required style="text-align: center; direction: ltr;">
-                    </div>
+                <form id="google-enrollment-form" action="https://docs.google.com/forms/d/e/1FAIpQLSenZt4OpIxhZ-gEIGuSeRmFqd4df6iY2mGOrJagOYUw7IfqbA/formResponse" method="POST" target="hidden_iframe_bridge" onsubmit="handleFormSubmitSuccess(event)">
                     
                     <div class="form-group">
-                        <label>المستوى الدراسي الحالي</label>
-                        <div class="custom-select-wrapper" id="select-level-container">
-                            <div class="custom-select-trigger" id="level-trigger-text">أعرف بعض الأحكام وأحتاج لتصحيح التلاوة.</div>
-                            <div class="custom-options-panel">
-                                <div class="custom-option-item selected" data-value="أعرف بعض الأحكام أحتاج إلى تصحيح التلاوة والتطبييق العملي).">أعرف بعض الأحكام وأحتاج لتصحيح التلاوة.</div>
-                                <div class="custom-option-item" data-value="مبتدئ (أريد ضبط الحروف والمخارج الأساسية من الصفر)">مبتدئ (ضبط الأحكام والمخارج من الصفر).</div>
-                                <div class="custom-option-item" data-value="متقدم (أبحث عن الإتقان الكامل وحفظ المتون والنطق الأكاديمي)">متقدم (أريد الإتقان الكامل وحفظ المتون).</div>
-                            </div>
-                        </div>
-                        <input type="hidden" name="entry.1189195991" id="hidden-level-input" value="أعرف بعض الأحكام أحتاج إلى تصحيح التلاوة والتطبييق العملي).">
+                        <label>الاسم الكريم <span class="required-star">*</span></label>
+                        <input type="text" name="entry.619436544" id="field-name" class="input-field text-right" placeholder="اسم" required>
                     </div>
 
                     <div class="form-group">
-                        <label>الفترة الزمنية المفضلة للدراسة</label>
-                        <div class="custom-select-wrapper" id="select-time-container">
-                            <div class="custom-select-trigger" id="time-trigger-text">الفترة الصباحية</div>
+                        <label>ما هي المادة التي ترغب في مراجعتها وتطويرها <span class="required-star">*</span></label>
+                        <div class="custom-select-wrapper" id="select-track-container">
+                            <div class="custom-select-trigger" id="track-trigger-text">اختر المادة...</div>
                             <div class="custom-options-panel">
-                                <div class="custom-option-item selected" data-value="صباحي">الفترة الصباحية</div>
-                                <div class="custom-option-item" data-value="مسائي">الفترة المسائية</div>
-                                <div class="custom-option-item" data-value="بعد العصر">فترة بعد العصر</div>
+                                <div class="custom-option-item" data-value="تعلم التجويد تصحيح التلاوة وضبط مخارج الحروف">تعلم التجويد تصحيح التلاوة وضبط مخارج الحروف</div>
+                                <div class="custom-option-item" data-value="قواعد اللغة العربية ومتابعة مناهج المملكة (لغتي)">قواعد اللغة العربية ومتابعة مناهج المملكة (لغتي)</div>
+                                <div class="custom-option-item" data-value="تأسيس الأطفال والجمع بين اللسان العربي والقرآن">تأسيس الأطفال والجمع بين اللسان العربي والقرآن</div>
+                                <div class="custom-option-item" data-value="تعلم العربيه والتجويد لغير الناطقين">تعلم العربيه والتجويد لغير الناطقين</div>
                             </div>
                         </div>
-                        <input type="hidden" name="entry.146329539" id="hidden-time-input" value="صباحي">
+                        <input type="hidden" name="entry.1744476356" id="hidden-track-input" required>
                     </div>
 
-                    <button type="submit" class="btn-submit">إرسال طلب الاشتراك بنجاح</button>
+                    <div class="form-group">
+                        <label>رقم الواتساب للتنسيق وتحديد الموعد (مع مفتاح الدولة) : <span class="required-star">*</span></label>
+                        <input type="tel" name="entry.1471545871" id="field-phone" class="input-field" placeholder="مثال: +966" required style="text-align: right; direction: ltr;">
+                    </div>
+
+                    <div class="form-group">
+                        <label>الدولة المقيم بها (لتنسيق فرق التوقيت) : <span class="required-star">*</span></label>
+                        <input type="text" name="entry.866727643" id="field-country" class="input-field text-right" placeholder="مثال: السعوديه" required>
+                    </div>
+
+                    <button type="submit" class="btn-submit">إرسال طلب التسجيل</button>
                 </form>
             </div>
         </div>
@@ -480,17 +475,18 @@
 
     <div class="modal-overlay" id="modal-success">
         <div class="modal-content">
-            <h3>تم تسجيل طلب الاشتراك بنجاح</h3>
-            <p>شكراً لك، تم حفظ خيارات اشتراكك بملف النظام. ستقوم الإدارة بمراجعة البيانات وإصدار كود الدخول الخاص بك وإرساله لشرائح الواتساب المسجلة.</p>
+            <h3>تم تسجيل طلبك بنجاح</h3>
+            <p>شكراً لثقتكم. سيتم التواصل معكم عبر الواتساب في أقرب وقت لتنسيق المواعيد وإصدار كود الدخول الخاص بكم.</p>
             <button class="btn-modal-close" onclick="closeModal()">إغلاق ومتابعة</button>
         </div>
     </div>
 
     <footer>
-        جميع الحقوق محفوظة © لمنصة تَلَقِّي لإتقان تلاوة القرآن الكريم
+        جميع الحقوق محفوظة © لمنصة تَلَقِي التعليمية لإتقان تلاوة القرآن الكريم
     </footer>
 
     <script>
+        // محرك القوائم المنسدلة للنموذج الجديد
         function initCustomSelectEngine(containerId, triggerId, hiddenInputId) {
             const wrapper = document.getElementById(containerId);
             const trigger = document.getElementById(triggerId);
@@ -499,6 +495,7 @@
 
             trigger.addEventListener('click', function(e) {
                 e.stopPropagation();
+                // إغلاق أي قائمة أخرى مفتوحة
                 document.querySelectorAll('.custom-select-wrapper').forEach(w => {
                     if(w.id !== containerId) w.classList.remove('open');
                 });
@@ -506,90 +503,10 @@
             });
 
             options.forEach(option => {
-                option.addEventListener('click', function() {
+                option.addEventListener('click', function(e) {
+                    e.stopPropagation();
                     options.forEach(opt => opt.classList.remove('selected'));
                     this.classList.add('selected');
                     trigger.innerText = this.innerText;
-                    hiddenInput.value = this.getAttribute('data-value');
-                    wrapper.classList.remove('open');
-                });
-            });
-        }
-
-        initCustomSelectEngine('select-level-container', 'level-trigger-text', 'hidden-level-input');
-        initCustomSelectEngine('select-time-container', 'time-trigger-text', 'hidden-time-input');
-
-        document.addEventListener('click', function() {
-            document.querySelectorAll('.custom-select-wrapper').forEach(w => w.classList.remove('open'));
-        });
-
-        function switchPanel(panelId) {
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.form-panel').forEach(panel => panel.classList.remove('active'));
-
-            document.getElementById('tab-' + panelId).classList.add('active');
-            document.getElementById('panel-' + panelId).classList.add('active');
-
-            document.getElementById('student-error').style.display = "none";
-            document.getElementById('teacher-error').style.display = "none";
-        }
-
-        function handleStudentLogin() {
-            var code = document.getElementById('student-passcode').value.trim().toUpperCase();
-            var err = document.getElementById('student-error');
-
-            if (code === "1234") {
-                err.style.display = "none";
-                localStorage.setItem("talqi_authenticated", "true");
-                localStorage.setItem("talqi_role", "student");
-                window.location.href = "main_platform/dashboard.html";
-            } else {
-                err.style.display = "block";
-            }
-        }
-
-        function handleTeacherLogin() {
-            var code = document.getElementById('teacher-passcode').value.trim().toUpperCase();
-            var err = document.getElementById('teacher-error');
-
-            if (code === "عاليه حسن" || code === "الخلد" || code === "KHOLOD-ALYA") {
-                err.style.display = "none";
-                localStorage.setItem("talqi_authenticated", "true");
-                localStorage.setItem("talqi_role", "teacher_samia");
-                window.location.href = "dar_kholod/dashboard-kholod.html";
-            } else if (code === "EMAN" || code === "إيمان") {
-                err.style.display = "none";
-                localStorage.setItem("talqi_authenticated", "true");
-                localStorage.setItem("talqi_role", "teacher_eman");
-                window.location.href = "eman_academy/dashboard-eman.html";
-            } else if (code === "ABDULLAH" || code === "عبدالله") {
-                err.style.display = "none";
-                localStorage.setItem("talqi_authenticated", "true");
-                localStorage.setItem("talqi_role", "admin_abdullah");
-                window.location.href = "abdullah_academy/dashboard-abdullah.html";
-            } else {
-                err.style.display = "block";
-            }
-        }
-
-        function handleGuestLogin() {
-            localStorage.setItem("talqi_authenticated", "true");
-            localStorage.setItem("talqi_role", "guest");
-            window.location.href = "main_platform/dashboard.html";
-        }
-
-        function handleFormSubmitSuccess(e) {
-            setTimeout(() => {
-                document.getElementById('modal-success').style.display = "flex";
-            }, 600);
-        }
-
-        function closeModal() {
-            document.getElementById('modal-success').style.display = "none";
-            document.getElementById('field-name').value = "";
-            document.getElementById('field-phone').value = "";
-            switchPanel('interactive');
-        }
-    </script>
-</body>
-</html>
+                    trigger.style.color = 'var(--text-main)';
+                    hiddenInput.value = this.getAttribute('
