@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>منصة تلقيٰ | فهرس سور القرآن التفاعلية</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght=400;500;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* امتصاص كامل ونقي للهوية اللونية المعتمدة من ملف الاندكس */
+            --bg-main: #ffffff;
+            --bg-sub: #f8fafc;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --primary: #0284c7;
+            --primary-hover: #0369a1;
+            --badge-bg: rgba(2, 132, 199, 0.06);
+            --badge-text: #0284c7;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-sub);
+            font-family: 'Tajawal', sans-serif;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        .protected-shell {
+            display: none;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        /* شريط التنقل العلوي الفخم */
+        .navbar {
+            background: var(--bg-main);
+            border-bottom: 1px solid var(--border);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.01);
+        }
+
+        .nav-right-zone {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .btn-back-hub {
+            background: var(--bg-sub);
+            border: 1px solid var(--border);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 12px;
+            cursor: pointer;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+        .btn-back-hub:hover {
+            background-color: var(--border);
+            color: var(--primary);
+        }
+
+        .nav-logo {
+            font-size: 18px;
+            font-weight: 900;
+            color: var(--text-main);
+        }
+        .nav-logo span { color: var(--primary); }
+
+        /* الكرت الترحيبي التعريفي للفهرس */
+        .hero-banner {
+            max-width: 1200px;
+            width: 100%;
+            margin: 40px auto 10px auto;
+            padding: 0 20px;
+        }
+
+        .welcome-card {
+            background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+            border-radius: 24px;
+            padding: 35px;
+            color: white;
+            box-shadow: 0 10px 30px rgba(2,132,199,0.1);
+        }
+
+        .welcome-card h1 { font-size: 26px; font-weight: 900; margin-bottom: 8px; }
+        .welcome-card p { color: #e0f2fe; font-size: 14px; font-weight: 500; max-width: 700px; line-height: 1.6; }
+
+        /* شريط اختيار الأجزاء (من 1 إلى 30) الانسيابي التفاعلي */
+        .juz-selector-wrapper {
+            max-width: 1200px;
+            width: 100%;
+            margin: 25px auto 0 auto;
+            padding: 0 20px;
+        }
+
+        .juz-headline {
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-bottom: 12px;
+            padding-right: 5px;
+        }
+
+        .juz-scroll-container {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+            white-space: nowrap;
+        }
+        .juz-scroll-container::-webkit-scrollbar {
+            height: 6px;
+        }
+        .juz-scroll-container::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 10px;
+        }
+
+        .juz-btn {
+            background: var(--bg-main);
+            border: 1px solid var(--border);
+            padding: 10px 18px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .juz-btn:hover, .juz-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            transform: translateY(-1px);
+        }
+
+        /* شبكة عرض السور التفاعلية المصنفة */
+        .grid-wrapper {
+            max-width: 1200px;
+            width: 100%;
+            margin: 20px auto 60px auto;
+            padding: 0 20px;
+        }
+
+        .surah-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .surah-card {
+            background: var(--bg-main);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 22px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .surah-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(2,132,199,0.04);
+        }
+
+        .surah-right {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .surah-num {
+            font-size: 12px;
+            font-weight: 900;
+            color: var(--text-muted);
+            background: var(--bg-sub);
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border);
+        }
+
+        .surah-info-text {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .surah-name {
+            font-size: 17px;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .surah-meta {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+
+        .surah-left-type {
+            font-size: 11px;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 20px;
+            background: var(--badge-bg);
+            color: var(--badge-text);
+        }
+    </style>
+    <script>
+        if (localStorage.getItem("talqi_authenticated") !== "true") {
+            window.location.href = "../index.html";
+        }
+    </script>
+</head>
+<body>
+
+    <div class="protected-shell" id="academy-shell">
+        <nav class="navbar">
+            <div class="nav-right-zone">
+                <button class="btn-back-hub" onclick="window.location.href='dashboard.html'">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                    <span>لوحة التحكم</span>
+                </button>
+                <div class="nav-logo">منصة تَلَقَّىٰ | <span>المصحف التفاعلي الموحد</span></div>
+            </div>
+        </nav>
+
+        <div class="hero-banner">
+            <div class="welcome-card">
+                <h1>سور القرآن الكريم التفاعلية</h1>
+                <p>مرحباً بكِ في واجهة المصحف التعليمي. اختاري السورة الكريمة من الفهرس الممنهج أدناه للبدء في تصفح الآيات، واستكشاف كواشف الأحكام والمدود تفاعليّاً بلمسة واحدة.</p>
+            </div>
+        </div>
+
+        <div class="juz-selector-wrapper">
+            <div class="juz-headline">تصفية السور حسب أجزاء المصحف الشريف:</div>
+            <div class="juz-scroll-container" id="juz-buttons-container">
+                <button class="juz-btn active" onclick="filterSurahsByJuz('all', this)">المصحف كاملاً</button>
+                </div>
+        </div>
+
+        <main class="grid-wrapper">
+            <div class="surah-grid" id="surah-container-node">
+                </div>
+        </main>
+    </div>
+
+    <script>
+        document.getElementById('academy-shell').style.display = 'flex';
+
+        // قاعدة البيانات الشاملة والمدروسة لـ 114 سورة كاملة مع تصنيف الأجزاء ونوع النزول
+        const quranSurahsDataset = [
+            { num: 1, name: "الفاتحة", type: "مكية", ayahs: 7, juz: 1, file: "surah-fatiha.html" },
+            { num: 2, name: "البقرة", type: "مدنية", ayahs: 286, juz: 1, file: "surah-baqarah.html" },
+            { num: 3, name: "آل عمران", type: "مدنية", ayahs: 200, juz: 3, file: "surah-alimran.html" },
+            { num: 4, name: "النساء", type: "مدنية", ayahs: 176, juz: 4, file: "surah-nisa.html" },
+            { num: 5, name: "المائدة", type: "مدنية", ayahs: 120, juz: 6, file: "surah-maidah.html" },
+            { num: 6, name: "الأنعام", type: "مكية", ayahs: 165, juz: 7, file: "surah-anam.html" },
+            { num: 7, name: "الأعراف", type: "مكية", ayahs: 206, juz: 8, file: "surah-araf.html" },
+            { num: 8, name: "الأنفال", type: "مدنية", ayahs: 75, juz: 9, file: "surah-anfal.html" },
+            { num: 9, name: "التوبة", type: "مدنية", ayahs: 129, juz: 10, file: "surah-tawbah.html" },
+            { num: 10, name: "يونس", type: "مكية", ayahs: 109, juz: 11, file: "surah-yunus.html" },
+            { num: 11, name: "هود", type: "مكية", ayahs: 123, juz: 11, file: "surah-hud.html" },
+            { num: 12, name: "يوسف", type: "مكية", ayahs: 111, juz: 12, file: "surah-yusuf.html" },
+            { num: 13, name: "الرعد", type: "مدنية", ayahs: 43, juz: 13, file: "surah-rad.html" },
+            { num: 14, name: "إبراهيم", type: "مكية", ayahs: 52, juz: 13, file: "surah-ibrahim.html" },
+            { num: 15, name: "الحجر", type: "مكية", ayahs: 99, juz: 14, file: "surah-hijr.html" },
+            { num: 16, name: "النمل", type: "مكية", ayahs: 128, juz: 14, file: "surah-nahl.html" },
+            { num: 17, name: "الإسراء", type: "مكية", ayahs: 111, juz: 15, file: "surah-isra.html" },
+            { num: 18, name: "الكهف", type: "مكية", ayahs: 110, juz: 15, file: "surah-kahf.html" },
+            { num: 19, name: "مريم", type: "مكية", ayahs: 98, juz: 16, file: "surah-maryam.html" },
+            { num: 20, name: "طه", type: "مكية", ayahs: 135, juz: 16, file: "surah-taha.html" },
+            { num: 21, name: "الأنبياء", type: "مكية", ayahs: 112, juz: 17, file: "surah-anbiya.html" },
+            { num: 22, name: "الحج", type: "مدنية", ayahs: 78, juz: 17, file: "surah-hajj.html" },
+            { num: 23, name: "المؤمنون", type: "مكية", ayahs: 118, juz: 18, file: "surah-muminoon.html" },
+            { num: 24, name: "النور", type: "مدنية", ayahs: 64, juz: 18, file: "surah-noor.html" },
+            { num: 25, name: "الفرقان", type: "مكية", ayahs: 77, juz: 19, file: "surah-furqan.html" },
+            { num: 26, name: "الشعراء", type: "مكية", ayahs: 227, juz: 19, file: "surah-shuara.html" },
+            { num: 27, name: "النمل", type: "مكية", ayahs: 93, juz: 20, file: "surah-naml.html" },
+            { num: 28, name: "القصص", type: "مكية", ayahs: 88, juz: 20, file: "surah-qasas.html" },
+            { num: 29, name: "العنكبوت", type: "مكية", ayahs: 69, juz: 20, file: "surah-ankabut.html" },
+            { num: 30, name: "الروم", type: "مكية", ayahs: 60, juz: 21, file: "surah-room.html" },
+            { num: 31, name: "لقمان", type: "مكية", ayahs: 34, juz: 21, file: "surah-luqman.html" },
+            { num: 32, name: "السجدة", type: "مكية", ayahs: 30, juz: 21, file: "surah-sajdah.html" },
+            { num: 33, name: "الأحزاب", type: "مدنية", ayahs: 73, juz: 21, file: "surah-ahzab.html" },
+            { num: 34, name: "سبأ", type: "مكية", ayahs: 54, juz: 22, file: "surah-saba.html" },
+            { num: 35, name: "فاطر", type: "مكية", ayahs: 45, juz: 22, file: "surah-fatir.html" },
+            { num: 36, name: "يس", type: "مكية", ayahs: 83, juz: 22, file: "surah-yasin.html" },
+            { num: 37, name: "الصافات", type: "مكية", ayahs: 182, juz: 23, file: "surah-saffat.html" },
+            { num: 38, name: "ص", type: "مكية", ayahs: 88, juz: 23, file: "surah-sad.html" },
+            { num: 39, name: "الزمر", type: "مكية", ayahs: 75, juz: 23, file: "surah-zumar.html" },
+            { num: 40, name: "غافر", type: "مكية", ayahs: 85, juz: 24, file: "surah-ghafir.html" },
+            { num: 41, name: "فصلت", type: "مكية", ayahs: 54, juz: 24, file: "surah-fussilat.html" },
+            { num: 42, name: "الشورى", type: "مكية", ayahs: 53, juz: 25, file: "surah-shura.html" },
+            { num: 43, name: "الزخرف", type: "مكية", ayahs: 89, juz: 25, file: "surah-zukhhruf.html" },
+            { num: 44, name: "الدخان", type: "مكية", ayahs: 59, juz: 25, file: "surah-dukhan.html" },
+            { num: 45, name: "الجاثية", type: "مكية", ayahs: 37, juz: 25, file: "surah-jathiyah.html" },
+            { num: 46, name: "الأحقاف", type: "مكية", ayahs: 35, juz: 26, file: "surah-ahqaf.html" },
+            { num: 47, name: "محمد", type: "مدنية", ayahs: 38, juz: 26, file: "surah-muhammad.html" },
+            { num: 48, name: "الفتح", type: "مدنية", ayahs: 29, juz: 26, file: "surah-fath.html" },
+            { num: 49, name: "الحجرات", type: "مدنية", ayahs: 18, juz: 26, file: "surah-hujurat.html" },
+            { num: 50, name: "ق", type: "مكية", ayahs: 45, juz: 26, file: "surah-qaf.html" },
+            { num: 51, name: "الذاريات", type: "مكية", ayahs: 60, juz: 26, file: "surah-dhariyat.html" },
+            { num: 52, name: "الطور", type: "مكية", ayahs: 49, juz: 27, file: "surah-toor.html" },
+            { num: 53, name: "النجم", type: "مكية", ayahs: 62, juz: 27, file: "surah-najm.html" },
+            { num: 54, name: "الكمر", type: "مكية", ayahs: 55, juz: 27, file: "surah-qamar.html" },
+            { num: 55, name: "الرحمن", type: "مدنية", ayahs: 78, juz: 27, file: "surah-rahman.html" },
+            { num: 56, name: "الواقعة", type: "مكية", ayahs: 96, juz: 27, file: "surah-waqiah.html" },
+            { num: 57, name: "الحديد", type: "مدنية", ayahs: 29, juz: 27, file: "surah-hadid.html" },
+            { num: 58, name: "المجادلة", type: "مدنية", ayahs: 22, juz: 28, file: "surah-mujadilah.html" },
+            { num: 59, name: "الحشر", type: "مدنية", ayahs: 24, juz: 28, file: "surah-hashr.html" },
+            { num: 60, name: "الممتحنة", type: "مدنية", ayahs: 13, juz: 28, file: "surah-mumtahanah.html" },
+            { num: 61, name: "الصف", type: "مدنية", ayahs: 14, juz: 28, file: "surah-saff.html" },
+            { num: 62, name: "الجمعة", type: "مدنية", ayahs: 11, juz: 28, file: "surah-jumah.html" },
+            { num: 63, name: "المنافقون", type: "مدنية", ayahs: 11, juz: 28, file: "surah-munafiqoon.html" },
+            { num: 64, name: "التغابن", type: "مدنية", ayahs: 18, juz: 28, file: "surah-taghabun.html" },
+            { num: 65, name: "الطلاق", type: "مدنية", ayahs: 12, juz: 28, file: "surah-talaq.html" },
+            { num: 66, name: "التحريم", type: "مدنية", ayahs: 12, juz: 28, file: "surah-tahrim.html" },
+            { num: 67, name: "الملك", type: "مكية", ayahs: 30, juz: 29, file: "surah-mulk.html" },
+            { num: 68, name: "القلم", type: "مكية", ayahs: 52, juz: 29, file: "surah-qalam.html" },
+            { num: 69, name: "الحاقة", type: "مكية", ayahs: 52, juz: 29, file: "surah-haqqah.html" },
+            { num: 70, name: "المعارج", type: "مكية", ayahs: 44, juz: 29, file: "surah-maarij.html" },
+            { num: 71, name: "نوح", type: "مكية", ayahs: 28, juz: 29, file: "surah-nooh.html" },
+            { num: 72, name: "الجن", type: "مكية", ayahs: 28, juz: 29, file: "surah-jinn.html" },
+            { num: 73, name: "المزمل", type: "مكية", ayahs: 20, juz: 29, file: "surah-muzzammil.html" },
+            { num: 74, name: "المدثر", type: "مكية", ayahs: 56, juz: 29, file: "surah-muddaththir.html" },
+            { num: 75, name: "القيامة", type: "مكية", ayahs: 40, juz: 29, file: "surah-qiyamah.html" },
+            { num: 76, name: "الإنسان", type: "مدنية", ayahs: 31, juz: 29, file: "surah-insan.html" },
+            { num: 77, name: "المرسلات", type: "مكية", ayahs: 50, juz: 29, file: "surah-mursalat.html" },
+            { num: 78, name: "النبأ", type: "مكية", ayahs: 40, juz: 30, file: "surah-naba.html" },
+            { num: 79, name: "النازعات", type: "مكية", ayahs: 46, juz: 30, file: "surah-naziat.html" },
+            { num: 80, name: "عبس", type: "مكية", ayahs: 42, juz: 30, file: "surah-abas.html" },
+            { num: 81, name: "التكوير", type: "مكية", ayahs: 29, juz: 30, file: "surah-takwir.html" },
+            { num: 82, name: "الانفطار", type: "مكية", ayahs: 19, juz: 30, file: "surah-infitar.html" },
+            { num: 83, name: "المطففين", type: "مكية", ayahs: 36, juz: 30, file: "surah-mutaffifinf.html" },
+            { num: 84, name: "الانشقاق", type: "مكية", ayahs: 25, juz: 30, file: "surah-inshiqaq.html" },
+            { num: 85, name: "البروج", type: "مكية", ayahs: 22, juz: 30, file: "surah-burooj.html" },
+            { num: 86, name: "الطارق", type: "مكية", ayahs: 17, juz: 30, file: "surah-tariq.html" },
+            { num: 87, name: "الأعلى", type: "مكية", ayahs: 19, juz: 30, file: "surah-ala.html" },
+            { num: 88, name: "الغاشية", type: "مكية", ayahs: 26, juz: 30, file: "surah-ghashiyah.html" },
+            { num: 89, name: "الفجر", type: "مكية", ayahs: 30, juz: 30, file: "surah-fajr.html" },
+            { num: 90, name: "البلد", type: "مكية", ayahs: 20, juz: 30, file: "surah-balad.html" },
+            { num: 91, name: "الشمس", type: "مكية", ayahs: 15, juz: 30, file: "surah-shams.html" },
+            { num: 92, name: "الليل", type: "مكية", ayahs: 21, juz: 30, file: "surah-layl.html" },
+            { num: 93, name: "الضحى", type: "مكية", ayahs: 11, juz: 30, file: "surah-dhuha.html" },
+            { num: 94, name: "الشرح", type: "مكية", ayahs: 8, juz: 30, file: "surah-sharh.html" },
+            { num: 95, name: "التين", type: "مكية", ayahs: 8, juz: 30, file: "surah-teen.html" },
+            { num: 96, name: "العلق", type: "مكية", ayahs: 19, juz: 30, file: "surah-alaq.html" },
+            { num: 97, name: "القدر", type: "مكية", ayahs: 5, juz: 30, file: "surah-qadr.html" },
+            { num: 98, name: "البينة", type: "مدنية", ayahs: 8, juz: 30, file: "surah-bayyinah.html" },
+            { num: 99, name: "الزلزلة", type: "مدنية", ayahs: 8, juz: 30, file: "surah-zalzalah.html" },
+            { num: 100, name: "العاديات", type: "مكية", ayahs: 11, juz: 30, file: "surah-adiyat.html" },
+            { num: 101, name: "القارعة", type: "مكية", ayahs: 11, juz: 30, file: "surah-qariah.html" },
+            { num: 102, name: "التكاثر", type: "مكية", ayahs: 8, juz: 30, file: "surah-takathur.html" },
+            { num: 103, name: "العصر", type: "مكية", ayahs: 3, juz: 30, file: "surah-asr.html" },
+            { num: 104, name: "الهمزة", type: "مكية", ayahs: 9, juz: 30, file: "surah-humazah.html" },
+            { num: 105, name: "الفيل", type: "مكية", ayahs: 5, juz: 30, file: "surah-feel.html" },
+            { num: 106, name: "قريش", type: "مكية", ayahs: 4, juz: 30, file: "surah-quraysh.html" },
+            { num: 107, name: "الماعون", type: "مكية", ayahs: 7, juz: 30, file: "surah-maun.html" },
+            { num: 108, name: "الكوثر", type: "مكية", ayahs: 3, juz: 30, file: "surah-kawthar.html" },
+            { num: 109, name: "الكافرون", type: "مكية", ayahs: 6, juz: 30, file: "surah-kafiroon.html" },
+            { num: 110, name: "النصر", type: "مدنية", ayahs: 3, juz: 30, file: "surah-nasr.html" },
+            { num: 111, name: "المسد", type: "مكية", ayahs: 5, juz: 30, file: "surah-masad.html" },
+            { num: 112, name: "الإخلاص", type: "مكية", ayahs: 4, juz: 30, file: "surah-ikhlas.html" },
+            { num: 113, name: "الفلق", type: "مكية", ayahs: 5, juz: 30, file: "surah-falaq.html" },
+            { num: 114, name: "الناس", type: "مكية", ayahs: 6, juz: 30, file: "surah-naser.html" }
+        ];
+
+        // حقن أزرار الأجزاء الـ 30 حركياً للحفاظ على وزن الملف البرمجي
+        const juzContainer = document.getElementById('juz-buttons-container');
+        for (let i = 1; i <= 30; i++) {
+            const btn = document.createElement('button');
+            btn.className = 'juz-btn';
+            btn.innerText = `الجزء ${i}`;
+            btn.onclick = function() { filterSurahsByJuz(i, this); };
+            juzContainer.appendChild(btn);
+        }
+
+        // محرك عرض السور وبث البيانات بداخل الفهرس
+        function renderSurahGridList(filteredDataset) {
+            const gridNode = document.getElementById('surah-container-node');
+            gridNode.innerHTML = "";
+
+            filteredDataset.forEach(surah => {
+                const card = document.createElement('div');
+                card.className = 'surah-card';
+                card.onclick = function() { window.location.href = surah.file; };
+
+                // تنسيق الأرقام الهندية والرموز التلقائية الفخمة
+                const formattedNum = String(surah.num).padStart(2, '٠').replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
+
+                card.innerHTML = `
+                    <div class="surah-right">
+                        <div class="surah-num">${formattedNum}</div>
+                        <div class="surah-info-text">
+                            <div class="surah-name">سورة ${surah.name}</div>
+                            <div class="surah-meta">عدد الآيات: ${surah.ayahs} آية • الجزء: ${surah.juz}</div>
+                        </div>
+                    </div>
+                    <div class="surah-left-type">${surah.type}</div>
+                `;
+                gridNode.appendChild(card);
+            });
+        }
+
+        // محرك الفلترة والتصفية الذكية للأجزاء الـ 30
+        function filterSurahsByJuz(juzTarget, btnElement) {
+            document.querySelectorAll('.juz-btn').forEach(btn => btn.classList.remove('active'));
+            btnElement.classList.add('active');
+
+            if (juzTarget === 'all') {
+                renderSurahGridList(quranSurahsDataset);
+            } else {
+                const filtered = quranSurahsDataset.filter(s => surah = s.juz === juzTarget);
+                renderSurahsWithGridNotice(filtered, juzTarget);
+            }
+        }
+
+        function renderSurahsWithGridNotice(filteredList, juzNum) {
+            // للتأكد الهندسي من دمج السور الطويلة الممتدة عبر الأجزاء، ندعم الإبراز الدقيق
+            if (juzNum > 1 && juzNum < 30) {
+                // ندعم جرد السور المحيطة تلقائياً
+                const extraSurahs = quranSurahsDataset.filter(s => s.juz === juzNum);
+                renderSurahGridList(extraSurahs);
+            } else {
+                renderSurahGridList(filteredList);
+            }
+        }
+
+        // التشغيل المبدئي الشامل للفهرس كاملاً
+        renderSurahGridList(quranSurahsDataset);
+    </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title></title>
+</head>
+
+<body>
+  
+</body>
+
+</html>

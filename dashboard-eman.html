@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>أكاديمية أ. إيمان عمري | لوحة المقررات والتحكم</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght=400;500;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-main: #ffffff;
+            --bg-sub: #f8fafc;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --primary: #0284c7;
+            --primary-hover: #0369a1;
+            --badge-bg: rgba(2, 132, 199, 0.06);
+            --badge-text: #0284c7;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-sub);
+            font-family: 'Tajawal', sans-serif;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        .protected-shell {
+            display: flex; /* تم فتح العزل الفوري لمنع الصفحة البيضاء */
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .main-header {
+            background: var(--bg-main);
+            border-bottom: 1px solid var(--border);
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.01);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .platform-logo {
+            font-size: 22px;
+            font-weight: 900;
+            letter-spacing: -0.5px;
+        }
+        .platform-logo span { color: var(--primary); }
+
+        .admin-badge {
+            background: rgba(2, 132, 199, 0.08);
+            color: var(--primary);
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 800;
+            border: 1px solid rgba(2, 132, 199, 0.15);
+        }
+
+        .btn-logout {
+            background: #fff1f2;
+            border: 1px solid #fecdd3;
+            color: #e11d48;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .btn-logout:hover { background: #ffe4e6; transform: translateY(-1px); }
+
+        .hero-banner {
+            max-width: 1300px;
+            width: 100%;
+            margin: 40px auto 10px auto;
+            padding: 0 20px;
+        }
+
+        .welcome-card {
+            background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+            border-radius: 24px;
+            padding: 35px;
+            color: white;
+            box-shadow: 0 10px 30px rgba(2,132,199,0.1);
+        }
+
+        .welcome-card h1 { font-size: 26px; font-weight: 900; margin-bottom: 8px; }
+        .welcome-card p { color: #e0f2fe; font-size: 14px; font-weight: 500; max-width: 600px; line-height: 1.6; }
+
+        .filter-wrapper {
+            max-width: 1300px;
+            width: 100%;
+            margin: 25px auto 0 auto;
+            padding: 0 20px;
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+        .filter-wrapper::-webkit-scrollbar { display: none; }
+
+        .filter-btn {
+            background: var(--bg-main);
+            border: 1px solid var(--border);
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            transform: translateY(-1px);
+        }
+
+        .grid-wrapper {
+            max-width: 1300px;
+            width: 100%;
+            margin: 20px auto 50px auto;
+            padding: 0 20px;
+        }
+
+        .courses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+            gap: 25px;
+        }
+
+        .course-card {
+            background: var(--bg-main);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 220px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .course-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--primary);
+            box-shadow: 0 12px 25px -5px rgba(2,132,199,0.06);
+        }
+
+        .card-top {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .cluster-badge {
+            align-self: flex-start;
+            font-size: 11px;
+            font-weight: 800;
+            padding: 4px 12px;
+            border-radius: 30px;
+            background: var(--badge-bg);
+            color: var(--badge-text);
+        }
+
+        .course-title { font-size: 17px; font-weight: 800; color: var(--text-main); line-height: 1.5; }
+        .course-desc { font-size: 13px; color: var(--text-muted); line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+        .card-footer {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 14px;
+            border-top: 1px solid var(--bg-sub);
+        }
+
+        .lesson-index {
+            font-size: 12px;
+            font-weight: 900;
+            color: var(--text-muted);
+            background: var(--bg-sub);
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .action-arrow {
+            color: var(--primary);
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 13px;
+        }
+    </style>
+    <script>
+        function enforceEmanRole() {
+            if (localStorage.getItem("talqi_authenticated") !== "true") {
+                window.location.href = "../index.html";
+            } else {
+                localStorage.setItem("talqi_role", "teacher_eman");
+            }
+        }
+        enforceEmanRole();
+
+        window.onfocus = function() {
+            enforceEmanRole();
+        };
+    </script>
+</head>
+<body>
+
+    <div class="protected-shell">
+        <header class="main-header">
+            <div class="header-right">
+                <div class="platform-logo">أكاديمية <span>تَلَقَّىٰ</span></div>
+                <div class="admin-badge">أ. إيمان عمري</div>
+            </div>
+            <button class="btn-logout" onclick="logoutAdmin()">إغلاق المنصة</button>
+        </header>
+
+        <div class="hero-banner">
+            <div class="welcome-card">
+                <h1>مرحباً بكِ أستاذة إيمان بنت محمد عمري</h1>
+                <p>لوحة المقررات والموسوعات الرقمية التفاعلية الحصرية لطالباتك، مربوطة بالكامل بالأطلس التفاعلي الموحد لملخص عمدة البيان.</p>
+            </div>
+        </div>
+
+        <div class="filter-wrapper">
+            <button class="filter-btn active" data-filter="all" onclick="filterCourses('all', this)">المناهج كاملة</button>
+            <button class="filter-btn" data-filter="intro" onclick="filterCourses('intro', this)">مبادئ الأداء والمخارج</button>
+            <button class="filter-btn" data-filter="noon" onclick="filterCourses('noon', this)">أحكام النون والميم</button>
+            <button class="filter-btn" data-filter="lamat" onclick="filterCourses('lamat', this)">اللامات والراءات والغنة</button>
+            <button class="filter-btn" data-filter="mad" onclick="filterCourses('mad', this)">علوم المدود</button>
+            <button class="filter-btn" data-filter="rules" onclick="filterCourses('rules', this)">التقاء الساكنين والمستثنيات</button>
+        </div>
+
+        <main class="grid-wrapper">
+            <div class="courses-grid" id="courses-container">
+                
+                <div class="course-card" data-cluster="intro" onclick="navigateToLesson('istiadha-waqf.html')">
+                    <div class="card-top">
+                        <div class="cluster-badge">مبادئ الأداء</div>
+                        <div class="course-title">الاستعاذة والبسملة والوقف والابتداء</div>
+                        <div class="course-desc">شرح أوجه الابتداء بالفواتح وحكم الفصل بين السور والوقف القبيح والتام.</div>
+                    </div>
+                    <div class="card-footer"><span class="lesson-index">٠١</span><span class="action-arrow">دخول الدرس ←</span></div>
+                </div>
+
+                <div class="course-card" data-cluster="intro" onclick="navigateToLesson('aaliat-huroof.html')">
+                    <div class="card-top">
+                        <div class="cluster-badge">مبادئ الأداء</div>
+                        <div class="course-title">آلية حدوث الحروف العربية</div>
+                        <div class="course-desc">الشرح الفيزيائي لنشوء الأصوات بالتصادم، التباعد، والاهتزاز في جهاز النطق.</div>
+                    </div>
+                    <div class="card-footer"><span class="lesson-index">٠٢</span><span class="action-arrow">دخول الدرس ←</span></div>
+                </div>
+
+                <div class="course-card" data-cluster="intro" onclick="navigateToLesson('alaqat-huroof.html')">
+                    <div class="card-top">
+                        <div class="cluster-badge">مبادئ الأداء</div>
+                        <div class="course-title">علاقات الحروف العربية بالتفصيل</div>
+                        <div class="course-desc">شرح أحكام المتماثلين، المتجانسين، المتقاربين، والمتباعدين في التلاوة.</div>
+                    </div>
+                    <div class="card-footer"><span class="lesson-index">٠٣</span><span class="action-arrow">دخول الدرس ←</span></div>
+                </div>
+
+                <div class="course-card" data-cluster="intro" onclick="navigateToLesson('makharij.html')">
+                    <div class="card-top">
+                        <div class="cluster-badge">مبادئ الأداء</div>
+                        <div class="course-title">مخارج الحروف العربية</div>
+                        <div class="course-desc">الأطلس التشريحي الفمي لضبط خروج الحروف من الحلق، واللسان، والشفتين والجوف.</div>
+                    </div>
+                    <div class="card-footer"><span class="lesson-index">٠٤</span><span class="action-arrow">دخول الدرس ←</span></div>
+                </div>
+
+                <div class="course-card" data-cluster="intro" onclick="navigateToLesson('sifat.html')">
+                    <div class="card-top">
+                        <div class="cluster-badge">مبادئ الأداء</div>
+                        <div class="course-title">صفات الحروف كاملة</div>
+                        <div class="course-desc">الأطلس الحركي التفاعلي لبيان صفات الحروف التي لها ضد والتي ليس لها ضد.</div>
+                    </div>
+                    <div class="card-footer"><span class="lesson-index">٠٥</span><span class="action-arrow">دخول الدرس ←</span></div>
+                </div>
+
+                <div class="course-card" data-cluster="noon" onclick="navigateToLesson('noon-tanween.html')">
+                    <div class="card-top">
+                        <div class="cluster-badge">أحكام النون والميم</div>
+                        <div class="course-title">أحكام النون الساكنة والتنوين</div>
+                        <div class="course-desc">التطبيق الصافي والتفاعلي لأحكام الإظهار الحلقي، الإدغام، الإخفاء، والإقلاب.</div>
+                    </div>
+                    <div class="card-footer"><span class="lesson-index">٠٦</span><span class="action-arrow">دخول الدرس ←</span></div>
+                </div>
+
+                <div class="course-card" data-cluster="noon" onclick="navigateToLesson('meem-sakinah.html')">
+                    <div class="card-top">
+                        <div class="cluster-badge">أحكام النون والميم</div>
+                        <div class="course-title">أحكام الميم الساكنة</div>
+                        <div class="course-desc">ضبط الأداء التلقي لأحكام الإخفاء الشفوي، إدغام المثلين الصغير، والإظهار الشفوي.</div>
+                    </div>
+                    <div class="card-footer"><span class="lesson-index">٠٧</span><span class="action-arrow">دخول الدرس ←</span></div>
+                </div>
+
+                <div class="course-card" data-cluster="lamat" onclick="navigateToLesson('lamat.html')">
+                    <div class="card-top">
+                        <div class="cluster-badge">اللامات والراءات</div>
+                        <div class="course-title">أحكام اللامات الساكنة كاملاً</div>
+                        <div class="course-desc">موسوعة أحكام اللام القمرية المظهرة، اللام الشمسية المدغمة، وأحكام لام الفعل.</div>
+                    </div>
+                    <div class="card-footer"><span class="lesson-index">٠٨</span><span class="action-arrow">دخول الدرس ←</span></div>
+                </div>
+
+                <div class="course-card" data-cluster="lamat" onclick="navigateToLesson('ghunnah.html')">
+                    <div class="card-top">
+                        <div class="cluster-badge">اللامات والراءات</div>
+                        <div class="course-title">مستويات وأحكام الغنة الزمانية</div>
+                        <div class="course-desc">بيان وتدريب تفاعلي لمراتب الغنة الأربعة (الأكمل، الكاملة، الناقصة، والأنقص).</div>
+                    </div>
+                    <div class="card-footer"><span class="lesson-index">٠٩</span><span class="action-arrow">دخول الدرس ←</span></div>
+                </div>
+
+                <div class="course-card" data-cluster="lamat" onclick="navigateToLesson('qalqalah.html')">
+                    <div class="card-top">
+                        <div class="cluster-badge">اللامات والراءات</div>
+                        <div class="course-title">أحكام ومراتب القلقلة</div>
+                        <div class="course-desc">الميزان السمعي لاضطراب حروف قطب جد في مراتبها (الكبرى، الوسطى، الصغرى).</div>
+                    </div>
+                    <div class="card-footer"><span class="lesson-index">١٠</span><span class="action-arrow">دخول الدرس ←</span></div>
+                </div>
+
+                <div class="course-card" data-cluster="lamat" onclick="navigateToLesson('tafkheem-tarqeeq.html')">
+                    <div class="card-top">
+                        <div class="cluster-badge">اللامات والراءات</div>
+                        <div class="course-title">أحكام التفخيم والترقيق دائماً</div>
+                        <div class="course-desc">تمييز حروف الاستعلاء السبعة المغلظة، وحروف الاستفال، والحروف الدائرة بين الحكمين.</div>
+                    </div>
+                    <div class="card-footer"><span class="lesson-index">١١</span><span class="action-arrow">دخول الدرس ←</span></div>
+                </div>
+
+                <div class="course-card" data-cluster="lamat" onclick="navigateToLesson('ahkam-raat.html')">
+                    <div class="card-top">
+                        <div class="cluster-badge">اللامات والراءات</div>
+                        <div class="course-title">أحكام الراءات بالتفصيل</div>
+                        <div class="course-desc">شرح تفاعلي لحالات تفخيم الراء الثمانية، حالات ترقيقها الأربعة، ومواضع جواز الوجهين.</div>
+                    </div>
+                    <div class="card-footer"><span class="lesson-index">١٢</span><span class="action-arrow">دخول الدرس ←</span></div>
+                </div>
+
+                <div class="course-card" data-cluster="mad" onclick="navigateToLesson('mad-tabii.html')">
+                    <div class="card-top">
+                        <div class="cluster-badge">علوم المدود</div>
+                        <div class="course-title">المد الطبيعي (الأصلي) وملحقاته</div>
+                        <div class="course-desc">ميزان المد حركتين للأصلي الكلمي والحرفي، ومد العوض، التمكين، والصلة الصغرى.</div>
+                    </div>
+                    <div class="card-footer"><span class="lesson-index">١٣</span><span class="action-arrow">دخول الدرس ←</span></div>
+                </div>
+
+                <div class="course-card" data-cluster="mad" onclick="navigateToLesson('mad-hamzah.html')">
+                    <div class="card-top">
+                        <div class="cluster-badge">علوم المدود</div>
+                        <div class="course-title">المد الفرعي بسبب الهمز واجتماعه</div>
+                        <div class="course-desc">شرح المد الواجب المتصل، الجائز المنفصل، مد البدل، وأحكام الصلة الكبرى.</div>
+                    </div>
+                    <div class="card-footer"><span class="lesson-index">١٤</span><span class="action-arrow">دخول الدرس ←</span></div>
+                </div>
+
+                <div class="course-card" data-cluster="mad" onclick="navigateToLesson('mad-sukoon.html')">
+                    <div class="card-top">
+                        <div class="cluster-badge">علوم المدود</div>
+                        <div class="course-title">المد الفرعي بسبب السكون واجتماعه</div>
+                        <div class="course-desc">مستويات الأداء للمد اللازم الكلمي والحرفي ٦ حركات، والعارض للسكون، ومد اللين.</div>
+                    </div>
+                    <div class="card-footer"><span class="lesson-index">١٥</span><span class="action-arrow">دخول الدرس ←</span></div>
+                </div>
+
+                <div class="course-card" data-cluster="mad" onclick="navigateToLesson('aqwa-sababayn.html')">
+                    <div class="card-top">
+                        <div class="cluster-badge">علوم المدود</div>
+                        <div class="course-title">قاعدة هرم أقوى السببين للمد</div>
+                        <div class="course-desc">ميزان العمل بالسبب الأقوى وإلغاء الأضعف عند اجتماع سببين على حرف مد واحد.</div>
+                    </div>
+                    <div class="card-footer"><span class="lesson-index">١٦</span><span class="action-arrow">دخول الدرس ←</span></div>
+                </div>
+
+                <div class="course-card" data-cluster="rules" onclick="navigateToLesson('sakynayn.html')">
+                    <div class="card-top">
+                        <div class="cluster-badge">الساكنين والمستثنيات</div>
+                        <div class="course-title">قاعدة أحكام التقاء الساكنين</div>
+                        <div class="course-desc">آلية تخلص العرب من ثقل التجمع الساكن في كلمة أو كلمتين بالحذف أو بالتحريك.</div>
+                    </div>
+                    <div class="card-footer"><span class="lesson-index">١٧</span><span class="action-arrow">دخول الدرس ←</span></div>
+                </div>
+
+                <div class="course-card" data-cluster="rules" onclick="navigateToLesson('nabr.html')">
+                    <div class="card-top">
+                        <div class="cluster-badge">الساكنين والمستثنيات</div>
+                        <div class="course-title">أحكام ومواضع النبر الصوتي</div>
+                        <div class="course-desc">مواضع الضغط المقطعي لحماية الحروف الساكنة ومنع التباس معاني المثنى بالمفرد.</div>
+                    </div>
+                    <div class="card-footer"><span class="lesson-index">١٨</span><span class="action-arrow">دخول الدرس ←</span></div>
+                </div>
+
+                <div class="course-card" data-cluster="rules" onclick="navigateToLesson('hamzatayn.html')">
+                    <div class="card-top">
+                        <div class="cluster-badge">الساكنين والمستثنيات</div>
+                        <div class="course-title">أحكام همزتي الوصل والقطع</div>
+                        <div class="course-desc">قواعد حركة البدء بهمزة الوصل في الأسماء والأفعال، وثبوت القطع، واجتماع الهمزتين.</div>
+                    </div>
+                    <div class="card-footer"><span class="lesson-index">١٩</span><span class="action-arrow">دخول الدرس ←</span></div>
+                </div>
+
+                <div class="course-card" data-cluster="rules" onclick="navigateToLesson('waqf-awakhir.html')">
+                    <div class="card-top">
+                        <div class="cluster-badge">الساكنين والمستثنيات</div>
+                        <div class="course-title">الوقف على أواخر الكلم بالتفصيل</div>
+                        <div class="course-desc">الأداء الشفوي والبصري لأوجه الوقف بالسكون المحض، الروم والإشمام وموانعهما الدقيقة.</div>
+                    </div>
+                    <div class="card-footer">
+                        <span class="lesson-index">٢٠</span>
+                        <span class="action-arrow">دخول الدرس ←</span>
+                    </div>
+                </div>
+
+                <div class="course-card" data-cluster="rules" onclick="navigateToLesson('maqtoo-mausool.html')">
+                    <div class="card-top">
+                        <div class="cluster-badge">الساكنين والمستثنيات</div>
+                        <div class="course-title">المقطوع والموصول وتاءات التأنيث</div>
+                        <div class="course-desc">معرفة رسم الكلمات المنفصلة والموصولة بالمصحف، وحكم الوقف على التاءات المبسوطة.</div>
+                    </div>
+                    <div class="card-footer"><span class="lesson-index">٢١</span><span class="action-arrow">دخول الدرس ←</span></div>
+                </div>
+
+                <div class="course-card" data-cluster="rules" onclick="navigateToLesson('mustathniat-hafs.html')">
+                    <div class="card-top">
+                        <div class="cluster-badge">الساكنين والمستثنيات</div>
+                        <div class="course-title">مستثنيات رواية حفص الفرشية</div>
+                        <div class="course-desc">الأداء المتقن لموضع الإمالة، التسهيل، وقاعدة الصاد والسين وياءات الزوائد.</div>
+                    </div>
+                    <div class="card-footer"><span class="lesson-index">٢٢</span><span class="action-arrow">دخول الدرس ←</span></div>
+                </div>
+
+                <div class="course-card" data-cluster="rules" onclick="navigateToLesson('hazf-ithbat.html')">
+                    <div class="card-top">
+                        <div class="cluster-badge">الساكنين والمستثنيات</div>
+                        <div class="course-title">أحكام حذف وإثبات حروف المد</div>
+                        <div class="course-desc">قواعد الوقف والوصل على حروف المد الثابتة رسمًا والمحذوفة لفظًا لالتقاء الساكنين.</div>
+                    </div>
+                    <div class="card-footer"><span class="lesson-index">٢٣</span><span class="action-arrow">دخول الدرس ←</span></div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function navigateToLesson(lessonFileName) {
+            localStorage.setItem("talqi_role", "admin_abdullah");
+            window.location.href = "../abdullah_academy/" + lessonFileName;
+        }
+
+        function filterCourses(category, btnElement) {
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            btnElement.classList.add('active');
+
+            let cards = document.querySelectorAll('.course-card');
+            cards.forEach(card => {
+                if (category === 'all' || card.getAttribute('data-cluster') === category) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        function logoutAdmin() {
+            localStorage.removeItem("talqi_authenticated");
+            localStorage.removeItem("talqi_role");
+            window.location.href = "../index.html";
+        }
+    </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title></title>
+</head>
+
+<body>
+  
+</body>
+
+</html>

@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>منصة تلقيٰ الرقمية | الأطلس التشريحي لمخارج الحروف</title>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght=400;700&family=Tajawal:wght=400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-main: #ffffff;
+            --bg-sub: #f8fafc;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --primary: #0284c7;
+            
+            /* ألوان المخارج العامة التشريحية المعتمدة برصانة */
+            --color-jawf: #f59e0b;
+            --color-halq: #ef4444;
+            --color-lisan: #d946ef;
+            --color-shafah: #10b981;
+            --color-khayshoom: #6366f1;
+            --color-glow: #ff0055;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-sub);
+            font-family: 'Tajawal', sans-serif;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* حماية المسار الفوري لمنع وميض المحتوى قبل التحقق الأمني */
+        .protected-shell {
+            display: none;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        /* شريط التحكم العلوي المطور للموسوعة */
+        .navbar {
+            background: var(--bg-main);
+            border-bottom: 1px solid var(--border);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 2000;
+        }
+
+        .nav-right-zone {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .nav-logo {
+            font-size: 18px;
+            font-weight: 900;
+            color: var(--text-main);
+        }
+        .nav-logo span { color: var(--primary); }
+
+        .btn-back-hub {
+            background: var(--bg-sub);
+            border: 1px solid var(--border);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 12px;
+            cursor: pointer;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+        .btn-back-hub:hover {
+            background-color: var(--border);
+            color: var(--primary);
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            padding: 10px 22px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            color: var(--text-muted);
+        }
+
+        .tab-btn.active[data-main="jawf"] { background: var(--color-jawf); color: white; border-color: var(--color-jawf); }
+        .tab-btn.active[data-main="halq"] { background: var(--color-halq); color: white; border-color: var(--color-halq); }
+        .tab-btn.active[data-main="lisan"] { background: var(--color-lisan); color: white; border-color: var(--color-lisan); }
+        .tab-btn.active[data-main="shafah"] { background: var(--color-shafah); color: white; border-color: var(--color-shafah); }
+        .tab-btn.active[data-main="khayshoom"] { background: var(--color-khayshoom); color: white; border-color: var(--color-khayshoom); }
+
+        /* مساحة العرض والهندسة الهجينة للسبورة */
+        .workspace-wrapper {
+            flex-grow: 1;
+            position: relative;
+            width: 100vw;
+            padding: 25px 20px;
+            overflow-y: auto;
+        }
+
+        .split-layout {
+            display: flex;
+            width: 100%;
+            max-width: 1350px;
+            gap: 30px;
+            margin: 0 auto;
+            align-items: flex-start;
+            position: relative;
+            z-index: 100;
+        }
+
+        @media (max-width: 950px) {
+            .split-layout { flex-direction: column; align-items: center; }
+            .visual-aside { position: sticky; top: 0; width: 100% !important; z-index: 500; background: white; }
+        }
+
+        /* الجانب التشريحي الاحترافي - الـ SVG الموجه */
+        .visual-aside {
+            width: 45%;
+            background: var(--bg-main);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.01);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: sticky;
+            top: 20px;
+        }
+
+        .svg-container {
+            width: 100%;
+            max-width: 440px;
+            height: auto;
+            background: #fafafa;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            padding: 10px;
+        }
+
+        /* حركية ريشة أعضاء النطق */
+        .tongue-path {
+            transition: d 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), fill 0.3s;
+        }
+        .velum-path {
+            transition: d 0.4s ease;
+        }
+        .glow-point {
+            transition: all 0.3s ease;
+            opacity: 0;
+            fill: var(--color-glow);
+            filter: drop-shadow(0 0 8px var(--color-glow));
+        }
+        .glow-point.active-emit { opacity: 0.9; }
+
+        /* الجانب التعليمي القائم على نظام بطاقات الحروف الفردية */
+        .info-aside {
+            width: 55%;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .makhraj-section-container {
+            display: none;
+            flex-direction: column;
+            gap: 25px;
+        }
+        .makhraj-section-container.active { display: flex; }
+
+        /* شريط اختيار الحرف الفرعي داخل المخرج العام */
+        .letter-selector-bar {
+            display: flex;
+            gap: 8px;
+            background: var(--bg-sub);
+            padding: 10px 15px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            flex-wrap: wrap;
+        }
+
+        .letter-btn {
+            background: white;
+            border: 1px solid var(--border);
+            width: 52px;
+            height: 52px;
+            font-size: 20px;
+            font-weight: 800;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .letter-btn:hover { border-color: var(--primary); color: var(--primary); }
+        .letter-btn.selected { background: var(--text-main); color: white; border-color: var(--text-main); }
+
+        .letter-detail-card {
+            display: none;
+            flex-direction: column;
+            gap: 20px;
+            animation: slideUp 0.4s ease;
+        }
+        .letter-detail-card.active { display: flex; }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        .flow-card {
+            background: var(--bg-main);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.01);
+        }
+
+        .academic-def {
+            font-size: 16px;
+            color: var(--text-main);
+            font-weight: 700;
+            line-height: 1.7;
+            margin-bottom: 20px;
+            border-right: 4px solid var(--primary);
+            padding-right: 15px;
+        }
+
+        .arrow-flow-block {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: var(--bg-sub);
+            padding: 20px;
+            border-radius: 16px;
+        }
+
+        .flow-line {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            line-height: 1.6;
+        }
+
+        .flow-line span.highlight {
+            color: var(--primary);
+            background: rgba(2, 132, 199, 0.08);
+            padding: 4px 12px;
+            border-radius: 8px;
+            white-space: nowrap;
+        }
+
+        .visual-equation {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .eq-box {
+            background: var(--bg-main);
+            border: 2px solid var(--border);
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 800;
+        }
+        .eq-box.outcome { color: white; border: none; background: var(--primary); }
+        .flow-arrow { color: var(--text-muted); font-weight: bold; }
+
+        /* الشبكة التطبيقية للآيات */
+        .examples-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .example-card {
+            background: var(--bg-main);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .example-card:hover { border-color: var(--primary); box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
+
+        .quran-text {
+            font-family: 'Amiri', serif;
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--text-main);
+            user-select: none;
+            flex-grow: 1;
+            text-align: center;
+            line-height: 2;
+        }
+
+        .target-word {
+            border-bottom: 2px dashed #cbd5e1;
+            padding: 0 4px;
+            transition: color 0.3s;
+        }
+        .example-card.revealed .target-word { color: var(--primary); border-bottom-color: var(--primary); font-weight: 800; }
+
+        .reveal-indicator {
+            font-size: 12px;
+            font-weight: 800;
+            color: var(--text-muted);
+            background: var(--bg-sub);
+            padding: 4px 12px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            white-space: nowrap;
+        }
+
+        .ayah-marker { 
+            color: #94a3b8; 
+            font-size: 0.85em; 
+            margin-right: 15px; 
+            cursor: pointer;
+            transition: all 0.3s;
+            user-select: none;
+            display: inline-block;
+        }
+        .ayah-marker.playing { color: #10b981; text-shadow: 0 0 10px rgba(16,185,129,0.5); }
+    </style>
+    <script>
+        if (localStorage.getItem("talqi_authenticated") !== "true" || localStorage.getItem("talqi_role") !== "admin_abdullah") {
+            window.location.href = "../index.html";
+        }
+    </script>
+</head>
+<body>
+
+    <div class="protected-shell" id="academy-shell">
+        <nav class="navbar">
+            <div class="nav-right-zone">
+                <button class="btn-back-hub" onclick="window.location.href='dashboard-abdullah.html'">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                    <span>لوحة المقررات</span>
+                </button>
+                <div class="nav-logo">تَلَقَّىٰ الأكاديمية | <span>أطلس المخارج التشريحي البصري</span></div>
+            </div>
+            <div class="nav-tabs">
+                <button class="tab-btn active" data-main="jawf" onclick="switchMainTab('jawf')">1. الجوف</button>
+                <button class="tab-btn" data-main="halq" onclick="switchMainTab('halq')">2. الحلق</button>
+                <button class="tab-btn" data-main="lisan" onclick="switchMainTab('lisan')">3. اللسان</button>
+                <button class="tab-btn" data-main="shafah" onclick="switchMainTab('shafah')">4. الشفتان</button>
+                <button class="tab-btn" data-main="khayshoom" onclick="switchMainTab('khayshoom')">5. الخيشوم</button>
+            </div>
+        </nav>
+
+        <div class="workspace-wrapper">
+            <div class="split-layout">
+                
+                <div class="visual-aside">
+                    <div class="svg-container">
+                        <svg viewBox="0 0 400 400" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M 320,40 C 320,40 370,120 350,220 C 340,270 330,320 330,370" fill="none" stroke="#cbd5e1" stroke-width="4" stroke-linecap="round"/>
+                            <path d="M 40,110 C 50,80 80,60 120,60 C 180,60 250,50 280,100" fill="none" stroke="#cbd5e1" stroke-width="2"/>
+                            
+                            <path d="M 40,110 C 60,110 70,100 80,100 C 110,100 150,85 190,85 C 230,85 260,100 275,125 C 285,135 285,150 280,158 C 278,165 272,165 272,158" fill="none" stroke="#0f172a" stroke-width="5" stroke-linecap="round"/>
+                            <path id="velum" class="velum-path" d="M 272,158 C 275,175 282,185 282,195" fill="none" stroke="#0f172a" stroke-width="4" stroke-linecap="round"/>
+                            
+                            <path d="M 300,100 C 300,160 300,240 285,340" fill="none" stroke="#0f172a" stroke-width="5" stroke-linecap="round"/>
+                            
+                            <path d="M 90,85 C 90,40 240,40 270,85" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="4,4"/>
+
+                            <path d="M 76,100 L 76,118 C 76,122 81,122 81,118 L 81,100" fill="#ffffff" stroke="#0f172a" stroke-width="1.5"/>
+                            <path d="M 76,165 L 76,147 C 76,143 81,143 81,147 L 81,165" fill="#ffffff" stroke="#0f172a" stroke-width="1.5"/>
+
+                            <path d="M 40,165 C 60,165 70,175 85,175 C 130,175 160,220 180,260 C 200,300 230,340 250,340" fill="none" stroke="#0f172a" stroke-width="5" stroke-linecap="round"/>
+
+                            <circle id="glow-jawf" class="glow-point" cx="180" cy="140" r="24" fill="none" stroke="var(--color-jawf)" stroke-width="6"/>
+                            <circle id="glow-aqsa" class="glow-point" cx="260" cy="180" r="14"/>
+                            <circle id="glow-wasat" class="glow-point" cx="190" cy="120" r="14"/>
+                            <circle id="glow-taraf" class="glow-point" cx="85" cy="115" r="10"/>
+                            <circle id="glow-shafah" class="glow-point" cx="65" cy="135" r="14" fill="none" stroke="var(--color-shafah)" stroke-width="5"/>
+                            <circle id="glow-halq-aqsa" class="glow-point" cx="295" cy="280" r="15" fill="none" stroke="var(--color-halq)" stroke-width="5"/>
+                            <circle id="glow-halq-wasat" class="glow-point" cx="295" cy="230" r="15" fill="none" stroke="var(--color-halq)" stroke-width="5"/>
+                            <circle id="glow-halq-adna" class="glow-point" cx="285" cy="190" r="15" fill="none" stroke="var(--color-halq)" stroke-width="5"/>
+                            <path id="glow-khayshoom" class="glow-point" d="M 160,50 Q 220,40 250,75" fill="none" stroke="var(--color-khayshoom)" stroke-width="8"/>
+
+                            <path id="tongue" class="tongue-path" d="M 86,160 C 100,160 140,165 190,170 C 240,175 270,220 270,260 C 255,275 210,250 160,205 C 120,185 86,175 86,160 Z" fill="#fca5a5" stroke="#e11d48" stroke-width="3" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <div id="visual-dynamic-status" style="font-family:'Tajawal'; font-size:16px; font-weight:700; color:var(--primary); margin-top:15px; text-align:center;">
+                        مخرج الجوف الحالي: اللسان في قاع الفم مرتاح ومفتوح 💤
+                    </div>
+                </div>
+
+                <div class="info-aside">
+                    
+                    <div class="makhraj-section-container active" id="sect-jawf">
+                        <div class="letter-selector-bar">
+                            <button class="letter-btn selected" onclick="selectLetter('jawf', 'madd', this)">مَد</button>
+                        </div>
+                        
+                        <div class="letter-detail-card active" id="card-jawf-madd">
+                            <div class="flow-card">
+                                <h3 class="rule-title-large" style="color:var(--color-jawf)">مخرج حروف المد الثلاثة (الأصلي)</h3>
+                                <div class="academic-def">خروج الألف والواو والياء المدية من تجويف الحلق والفم دون تصادم أو نقطة ارتكاز محددة.</div>
+                                <div class="arrow-flow-block">
+                                    <div class="flow-line"><span class="highlight">ببساطة:</span><span>هنطق الحرف ممتد مع الهواء، ولساني مرتاح تماماً لتحت!</span></div>
+                                    <div class="flow-line"><span class="highlight">امتى؟</span><span>ألف ساكنة قبلها فتح [ كَانَ ]، واو ساكنة قبلها ضم [ يَقُولُ ]، ياء ساكنة قبلها كسر [ قِيلَ ].</span></div>
+                                </div>
+                                <div class="visual-equation">
+                                    <div class="eq-box">[ اْ ] ＋ فتحة</div>
+                                    <div class="eq-box">[ وْ ] ＋ ضمة</div>
+                                    <div class="eq-box">[ يْ ] ＋ كسرة</div>
+                                    <div class="flow-arrow">⟸ تخرج من ⟸</div>
+                                    <div class="eq-box outcome" style="background:var(--color-jawf)">خلاء الفم والحلق</div>
+                                </div>
+                            </div>
+                            <div class="section-title-sub" style="font-weight: 800; font-size: 14px; margin-bottom: 10px; color: var(--text-main);">الآيات التطبيقية الخمس (بصوت الشيخ الحصري):</div>
+                            <div class="examples-grid">
+                                <div class="example-card" onclick="toggleReveal(this)"><div class="card-info-side"><span class="reveal-indicator">الألف</span></div><div class="quran-text">مَالِكِ يَوْمِ <span class="target-word">الدِّينِ</span> <span class="ayah-marker" onclick="playAudio('001004', this)">﴿٤﴾</span></div></div>
+                                <div class="example-card" onclick="toggleReveal(this)"><div class="card-info-side"><span class="reveal-indicator">الواو</span></div><div class="quran-text">الَّذِينَ هُمْ عَن صَلَاتِهِمْ <span class="target-word">سَاهُونَ</span> <span class="ayah-marker" onclick="playAudio('107005', this)">﴿٥﴾</span></div></div>
+                                <div class="example-card" onclick="toggleReveal(this)"><div class="card-info-side"><span class="reveal-indicator">الياء</span></div><div class="quran-text">فِي <span class="target-word">جِيدِهَا</span> حَبْلٌ مِّن مَّسَدٍ <span class="ayah-marker" onclick="playAudio('111005', this)">﴿٥﴾</span></div></div>
+                                <div class="example-card" onclick="toggleReveal(this)"><div class="card-info-side"><span class="reveal-indicator">الألف</span></div><div class="quran-text">تَبَّتْ <span class="target-word">يَدَا</span> أَبِي لَهَبٍ وَتَبَّ <span class="ayah-marker" onclick="playAudio('111001', this)">﴿١﴾</span></div></div>
+                                <div class="example-card" onclick="toggleReveal(this)"><div class="card-info-side"><span class="reveal-indicator">الواو</span></div><div class="quran-text">قُلْ يَا أَيُّهَا <span class="target-word">الْكَافِرُونَ</span> <span class="ayah-marker" onclick="playAudio('109001', this)">﴿١﴾</span></div></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="makhraj-section-container" id="sect-halq">
+                        <div class="letter-selector-bar">
+                            <button class="letter-btn selected" onclick="selectLetter('halq', 'aqsa', this)">ء-هـ</button>
+                            <button class="letter-btn" onclick="selectLetter('halq', 'wasat', this)">ع-ح</button>
+                            <button class="letter-btn" onclick="selectLetter('halq', 'adna', this)">غ-خ</button>
+                        </div>
+                        
+                        <div class="letter-detail-card active" id="card-halq-aqsa">
+                            <div class="flow-card">
+                                <h3 class="rule-title-large" style="color:var(--color-halq)">أقصى الحلق (الهمزة والهاء)</h3>
+                                <div class="academic-def">خروج الحرف من أبعد منطقة في الحلق مما يلي الصدر (منطقة الأوتار الصوتية).</div>
+                                <div class="arrow-flow-block">
+                                    <div class="flow-line"><span class="highlight">ببساطة:</span><span>الحرف بيطلع من أعمق حتة في الزور تحت خالص قريبة من صدرك!</span></div>
+                                    <div class="flow-line"><span class="highlight">امتى؟</span><span>عند النطق بالهمزة [ أ ] مخرجا صريحاً، أو الهاء [ هـ ] باهتزاز الأوتار.</span></div>
+                                </div>
+                            </div>
+                            <div class="section-title-sub" style="font-weight: 800; font-size: 14px; margin-bottom: 10px; color: var(--text-main);">الآيات التطبيقية الخمس (بصوت الشيخ الحصري):</div>
+                            <div class="examples-grid">
+                                <div class="example-card" onclick="toggleReveal(this)"><div class="card-info-side"><span class="reveal-indicator">الهمزة</span></div><div class="quran-text">قُلْ هُوَ اللَّهُ <span class="target-word">أَحَدٌ</span> <span class="ayah-marker" onclick="playAudio('112001', this)">﴿١﴾</span></div></div>
+                                <div class="example-card" onclick="toggleReveal(this)"><div class="card-info-side"><span class="reveal-indicator">الهاء</span></div><div class="quran-text">قُلْ هُوَ اللَّهُ أَحَدٌ <span class="ayah-marker" onclick="playAudio('112001', this)">﴿١﴾</span></div></div>
+                                <div class="example-card" onclick="toggleReveal(this)"><div class="card-info-side"><span class="reveal-indicator">الهاء</span></div><div class="quran-text">الَّذِي أَطْعَمَهُم مِّن جُوعٍ <span class="target-word">وَآمَنَهُم</span> مِّنْ خَوْفٍ <span class="ayah-marker" onclick="playAudio('106004', this)">﴿٤﴾</span></div></div>
+                                <div class="example-card" onclick="toggleReveal(this)"><div class="card-info-side"><span class="reveal-indicator">الهمزة</span></div><div class="quran-text">.. وَأَرْسَلَ عَلَيْهِمْ طَيْرًا <span class="target-word">أَبَابِيلَ</span> <span class="ayah-marker" onclick="playAudio('105003', this)">﴿٣﴾</span></div></div>
+                                <div class="example-card" onclick="toggleReveal(this)"><div class="card-info-side"><span class="reveal-indicator">الهمزة</span></div><div class="quran-text">وَلَمْ يَكُن لَّهُ <span class="target-word">كُفُوًا أَحَدٌ</span> <span class="ayah-marker" onclick="playAudio('112004', this)">﴿٤﴾</span></div></div>
+                            </div>
+                        </div>
+
+                        <div class="letter-detail-card" id="card-halq-wasat">
+                            <div class="flow-card">
+                                <h3 class="rule-title-large" style="color:var(--color-halq)">وسط الحلق (العين والحاء)</h3>
+                                <div class="academic-def">خروج الحرف من منطقة لسان المزمار (منتصف الرقبة تماماً).</div>
+                                <div class="arrow-flow-block">
+                                    <div class="flow-line"><span class="highlight">ببساطة:</span><span>الحرف بيطلع من نص زورك بالظبط بضغط لسان المزمار لورا!</span></div>
+                                </div>
+                            </div>
+                            <div class="examples-grid">
+                                <div class="example-card" onclick="toggleReveal(this)"><div class="card-info-side"><span class="reveal-indicator">العين</span></div><div class="quran-text">الْحَمْدُ لِلَّهِ رَبِّ <span class="target-word">الْعَالَمِينَ</span> <span class="ayah-marker" onclick="playAudio('001002', this)">﴿٢﴾</span></div></div>
+                                <div class="example-card" onclick="toggleReveal(this)"><div class="card-info-side"><span class="reveal-indicator">الحاء</span></div><div class="quran-text"><span class="target-word">الْحَمْدُ</span> لِلَّهِ رَبِّ الْعَالَمِينَ <span class="ayah-marker" onclick="playAudio('001002', this)">﴿٢﴾</span></div></div>
+                                <div class="example-card" onclick="toggleReveal(this)"><div class="card-info-side"><span class="reveal-indicator">العين</span></div><div class="quran-text">خَلَقَ الْإِنسَانَ <span class="target-word">مِنْ عَلَقٍ</span> <span class="ayah-marker" onclick="playAudio('096002', this)">﴿٢﴾</span></div></div>
+                                <div class="example-card" onclick="toggleReveal(this)"><div class="card-info-side"><span class="reveal-indicator">الحاء</span></div><div class="quran-text">فَسَبِّحْ <span class="target-word">بِحَمْدِ</span> رَبِّكَ وَاسْتَغْفِرْهُ <span class="ayah-marker" onclick="playAudio('110003', this)">﴿٣﴾</span></div></div>
+                                <div class="example-card" onclick="toggleReveal(this)"><div class="card-info-side"><span class="reveal-indicator">العين</span></div><div class="quran-text">إِيَّاكَ نَعْبُدُ وَإِيَّاكَ <span class="target-word">نَسْتَعِينُ</span> <span class="ayah-marker" onclick="playAudio('001005', this)">﴿٥﴾</span></div></div>
+                            </div>
+                        </div>
+
+                        <div class="letter-detail-card" id="card-halq-adna">
+                            <div class="flow-card">
+                                <h3 class="rule-title-large" style="color:var(--color-halq)">أدنى الحلق (الغين والخاء)</h3>
+                                <div class="academic-def">خروج الحرف من أقرب منطقة في الحلق إلى الفم (منطقة جذر اللسان مع الحنك اللحمي).</div>
+                                <div class="arrow-flow-block">
+                                    <div class="flow-line"><span class="highlight">ببساطة:</span><span>أعلى حتة في زورك قريبة جداً من بقك من ورا!</span></div>
+                                </div>
+                            </div>
+                            <div class="examples-grid">
+                                <div class="example-card" onclick="toggleReveal(this)"><div class="card-info-side"><span class="reveal-indicator">الخاء</span></div><div class="quran-text">وَآمَنَهُم مِّن <span class="target-word">خَوْفٍ</span> <span class="ayah-marker" onclick="playAudio('106004', this)">﴿٤﴾</span></div></div>
+                                <div class="example-card" onclick="toggleReveal(this)"><div class="card-info-side"><span class="reveal-indicator">الغين</span></div><div class="quran-text"><span class="target-word">غَيْرِ</span> الْمَغْضُوبِ عَلَيْهِمْ <span class="ayah-marker" onclick="playAudio('001007', this)">﴿٧﴾</span></div></div>
+                                <div class="example-card" onclick="toggleReveal(this)"><div class="card-info-side"><span class="reveal-indicator">الغين</span></div><div class="quran-text">الْمَغْضُوبِ عَلَيْهِمْ <span class="ayah-marker" onclick="playAudio('001007', this)">﴿٧﴾</span></div></div>
+                                <div class="example-card" onclick="toggleReveal(this)"><div class="card-info-side"><span class="reveal-indicator">الخاء</span></div><div class="quran-text">خَلَقَ الْإِنسَانَ مِنْ <span class="target-word">عَلَقٍ</span> <span class="ayah-marker" onclick="playAudio('096002', this)">﴿٢﴾</span></div></div>
+                                <div class="example-card" onclick="toggleReveal(this)"><div class="card-info-side"><span class="reveal-indicator">الخاء</span></div><div class="quran-text">أَلَمْ يَعْلَم بِأَنَّ اللَّهَ <span class="target-word">يَرَىٰ</span> <span class="ayah-marker" onclick="playAudio('096014', this)">﴿١٤﴾</span></div></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="makhraj-section-container" id="sect-lisan">
+                        <div class="letter-selector-bar">
+                            <button class="letter-btn selected" onclick="selectLetter('lisan', 'qaf', this)">ق</button>
+                            <button class="letter-btn" onclick="selectLetter('lisan', 'kaf', this)">ك</button>
+                            <button class="letter-btn" onclick="selectLetter('lisan', 'shajariya', this)">ج-ش</button>
+                            <button class="letter-btn" onclick="selectLetter('lisan', 'taraf', this)">ط-د-ت</button>
+                            <button class="letter-btn" onclick="selectLetter('lisan', 'asliya', this)">ص-س</button>
+                        </div>
+                        
+                        <div class="letter-detail-card active" id="card-lisan-qaf">
+                            <div class="flow-card">
+                                <h3 class="rule-title-large" style="color:var(--color-lisan)">مخرج حرف القاف [ ق ]</h3>
+                                <div class="academic-def">أقصى اللسان (أبعده من وراء) مع ما يقابله من الحنك اللحمي (الرخو).</div>
+                                <div class="arrow-flow-block">
+                                    <div class="flow-line"><span class="highlight">ببساطة:</span><span>آخر لسانك من ورا بيقفل تماماً مع الحنك اللحمي الطري فوق، والحرف بيطلع تخين ومقلقل!</span></div>
+                                </div>
+                            </div>
+                            <div class="examples-grid">
+                                <div class="example-card" onclick="toggleReveal(this)"><div class="card-info-side"><span class="reveal-indicator">القاف</span></div><div class="quran-text"><span class="target-word">الْقَارِعَةُ</span> مَا الْقَارِعَةُ <span class="ayah-marker" onclick="playAudio('101001', this)">﴿١﴾</span></div></div>
+                                <div class="example-card" onclick="toggleReveal(this)"><div class="card-info-side"><span class="reveal-indicator">القاف</span></div><div class="quran-text">قُلْ أَعُوذُ بِرَبِّ <span class="target-word">الْفَلَقِ</span> <span class="ayah-marker" onclick="playAudio('113001', this)">﴿١﴾</span></div></div>
+                                <div class="example-card" onclick="toggleReveal(this)"><div class="card-info-side"><span class="reveal-indicator">القاف</span></div><div class="quran-text">لَقَدْ خَلَقْنَا الْإِنسَانَ فِي أَحْسَنِ <span class="target-word">تَقْوِيمٍ</span> <span class="ayah-marker" onclick="playAudio('095004', this)">﴿٤﴾</span></div></div>
+                                <div class="example-card" onclick="toggleReveal(this)"><div class="card-info-side"><span class="reveal-indicator">القاف</span></div><div class="quran-text">بِأَيِّ ذَنبٍ <span class="target-word">قُتِلَتْ</span> <span class="ayah-marker" onclick="playAudio('081009', this)">﴿٩﴾</span></div></div>
+                                <div class="example-card" onclick="toggleReveal(this)"><div class="card-info-side"><span class="reveal-indicator">القاف</span></div><div class="quran-text">إِذَا السَّمَاءُ <span class="target-word">انفَطَرَتْ</span> <span class="ayah-marker" onclick="playAudio('082001', this)">﴿١﴾</span></div></div>
+                            </div>
+                        </div>
+
+                        <div class="letter-detail-card" id="card-lisan-kaf">
+                            <div class="flow-card">
+                                <h3 class="rule-title-large" style="color:var(--color-lisan)">مخرج حرف الكاف [ ك ]</h3>
+                                <div class="academic-def">أقصى اللسان بعد مخرج القاف قليلاً (إلى الأمام فميّاً) مع الحنك العظمي واللحمي معاً.</div>
+                                <div class="arrow-flow-block">
+                                    <div class="flow-line"><span class="highlight">ببساطة:</span><span>آخر لسانك بيقفل بردو بس قدام مخرج القاف بحتة صغيرة عند الجزء العظمي الناشف!</span></div>
+                                </div>
+                            </div>
+                            <div class="examples-grid">
+                                <div class="example-card" onclick="toggleReveal(this)"><div class="card-info-side"><span class="reveal-indicator">الكاف</span></div><div class="quran-text">إِنَّا أَعْطَيْنَا<span class="target-word">كَ</span> الْكَوْثَرَ <span class="ayah-marker" onclick="playAudio('108001', this)">﴿١﴾</span></div></div>
+                                <div class="example-card" onclick="toggleReveal(this)"><div class="card-info-side"><span class="reveal-indicator">الكاف</span></div><div class="quran-text">أَلَمْ نَخْلُق<span class="target-word">كُّ</span>م مِّن مَّاءٍ مَّهِينٍ <span class="ayah-marker" onclick="playAudio('077020', this)">﴿٢٠﴾</span></div></div>
+                                <div class="example-card" onclick="toggleReveal(this)"><div class="card-info-side"><span class="reveal-indicator">الكاف</span></div><div class="quran-text">أَلْهَاكُمُ <span class="target-word">التَّكَاثُرُ</span> <span class="ayah-marker" onclick="playAudio('102001', this)">﴿١﴾</span></div></div>
+                                <div class="example-card" onclick="toggleReveal(this)"><div class="card-info-side"><span class="reveal-indicator">الكاف</span></div><div class="quran-text">إِذَا السَّمَاءُ <span class="target-word">كَانَتْ</span> وَرْدَةً كَالدِّهَانِ <span class="ayah-marker" onclick="playAudio('055037', this)">﴿٣٧﴾</span></div></div>
+                                <div class="example-card" onclick="toggleReveal(this)"><div class="card-info-side"><span class="reveal-indicator">الكاف</span></div><div class="quran-text">وَلَمْ يَكُن لَّهُ كُفُوًا <span class="target-word">أَحَدٌ</span> <span class="ayah-marker" onclick="playAudio('112004', this)">﴿٤﴾</span></div></div>
+                            </div>
+                        </div>
+
+                        <div class="letter-detail-card" id="card-lisan-shajariya">
+                            <div class="flow-card">
+                                <h3 class="rule-title-large" style="color:var(--color-lisan)">وسط اللسان (الجيم والشين والياء)</h3>
+                                <div class="academic-def">وسط اللسان مع ما يقابله من وسط الحنك الأعلى (غار الحنك).</div>
+                                <div class="arrow-flow-block">
+                                    <div class="flow-line"><span class="highlight">ببساطة:</span><span>نص لسانك بيترفع لفوق ويصطدم بسقف الحنك العظمي (مجموعة في كلمة جيش)!</span></div>
+                                </div>
+                            </div>
+                            <div class="examples-grid">
+                                <div class="example-card" onclick="toggleReveal(this)"><div class="card-info-side"><span class="reveal-indicator">الجيم</span></div><div class="quran-text">إِذَا جَاءَ نَصْرُ اللَّهِ <span class="target-word">وَالْفَتْحُ</span> <span class="ayah-marker" onclick="playAudio('110001', this)">﴿١﴾</span></div></div>
+                                <div class="example-card" onclick="toggleReveal(this)"><div class="card-info-side"><span class="reveal-indicator">الشين</span></div><div class="quran-text">مِن شَرِّ مَا <span class="target-word">خَلَقَ</span> <span class="ayah-marker" onclick="playAudio('113002', this)">﴿٢﴾</span></div></div>
+                                <div class="example-card" onclick="toggleReveal(this)"><div class="card-info-side"><span class="reveal-indicator">الياء</span></div><div class="quran-text">مَالِكِ يَوْمِ <span class="target-word">الدِّينِ</span> <span class="ayah-marker" onclick="playAudio('001004', this)">﴿٤﴾</span></div></div>
+                                <div class="example-card" onclick="toggleReveal(this)"><div class="card-info-side"><span class="reveal-indicator">الجيم</span></div><div class="quran-text">فِي <span class="target-word">جِيدِهَا</span> حَبْلٌ مِّن مَّسَدٍ <span class="ayah-marker" onclick="playAudio('111005', this)">﴿٥﴾</span></div></div>
+                                <div class="example-card" onclick="toggleReveal(this)"><div class="card-info-side"><span class="reveal-indicator">الشين</span></div><div class="quran-text">إِيلَافِهِمْ رِحْلَةَ <span class="target-word">الشِّتَاءِ</span> وَالصَّيْفِ <span class="ayah-marker" onclick="playAudio('106002', this)">﴿٢﴾</span></div></div>
+                            </div>
+                        </div>
+
+                        <div class="letter-detail-card" id="card-lisan-taraf">
+                            <div class="flow-card">
+                                <h3 class="rule-title-large" style="color:var(--color-lisan)">طرف اللسان (الطاء والدال والتاء)</h3>
+                                <div class="academic-def">طرف اللسان مع أصول الثنايا العليا (منبت الأسنان الأمامية فوق).</div>
+                                <div class="arrow-flow-block">
+                                    <div class="flow-line"><span class="highlight">ببساطة:</span><span>بوز لسانك من قدام بيخبط في اللثة العريضة منبت الأسنان اللي فوق!</span></div>
+                                </div>
+                            </div>
+                            <div class="examples-grid">
+                                <div class="example-card" onclick="toggleReveal(this)"><div class="card-info-side"><span class="reveal-indicator">الطاء</span></div><div class="quran-text">وَأَرْسَلَ عَلَيْهِمْ <span class="target-word">طَيْرًا</span> أَبَابِيلَ <span class="ayah-marker" onclick="playAudio('105003', this)">﴿٣﴾</span></div></div>
+                                <div class="example-card" onclick="toggleReveal(this)"><div class="card-info-side"><span class="reveal-indicator">الدال</span></div><div class="quran-text">قُلْ هُوَ اللَّهُ <span class="target-word">أَحَدٌ</span> <span class="ayah-marker" onclick="playAudio('112001', this)">﴿١﴾</span></div></div>
+                                <div class="example-card" onclick="toggleReveal(this)"><div class="card-info-side"><span class="reveal-indicator">التاء</span></div><div class="quran-text"><span class="target-word">تَبَّتْ</span> يَدَا أَبِي لَهَبٍ وَتَبَّ <span class="ayah-marker" onclick="playAudio('111001', this)">﴿١﴾</span></div></div>
+                                <div class="example-card" onclick="toggleReveal(this)"><div class="card-info-side"><span class="reveal-indicator">الطاء</span></div><div class="quran-text">وَلَا يَحُضُّ عَلَىٰ <span class="target-word">طَعَامِ</span> الْمِسْكِينِ <span class="ayah-marker" onclick="playAudio('107003', this)">﴿٣﴾</span></div></div>
+                                <div class="example-card" onclick="toggleReveal(this)"><div class="card-info-side"><span class="reveal-indicator">الدال</span></div><div class="quran-text">لَمْ يَلِدْ وَلَمْ <span class="target-word">يُولَدْ</span> <span class="ayah-marker" onclick="playAudio('112003', this)">﴿٣﴾</span></div></div>
+                            </div>
+                        </div>
+
+                        <div class="letter-detail-card" id="card-lisan-asliya">
+                            <div class="flow-card">
+                                <h3 class="rule-title-large" style="color:var(--color-lisan)">حروف الصفير (الصاد والسين والزاي)</h3>
+                                <div class="academic-def">طرف اللسان مع ما فوق الثنايا السفلى (بين الأسنان العليا والسفلى).</div>
+                                <div class="arrow-flow-block">
+                                    <div class="flow-line"><span class="highlight">ببساطة:</span><span><b>الصاد:</b> ضهر لسانك بيترفع لسقف البق والبق بيتمست بصدى تخين! <b>السين:</b> لسانك مرتاح لتحت والصوت رفيع!</span></div>
+                                </div>
+                            </div>
+                            <div class="examples-grid">
+                                <div class="example-card" onclick="toggleReveal(this)"><div class="card-info-side"><span class="reveal-indicator">الصاد</span></div><div class="quran-text"><span class="target-word">صِرَاطَ</span> الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ <span class="ayah-marker" onclick="playAudio('001007', this)">﴿٧﴾</span></div></div>
+                                <div class="example-card" onclick="toggleReveal(this)"><div class="card-info-side"><span class="reveal-indicator">السين</span></div><div class="quran-text">الَّذِينَ هُمْ عَن صَلَاتِهِمْ <span class="target-word">سَاهُونَ</span> <span class="ayah-marker" onclick="playAudio('107005', this)">﴿٥﴾</span></div></div>
+                                <div class="example-card" onclick="toggleReveal(this)"><div class="card-info-side"><span class="reveal-indicator">السين</span></div><div class="quran-text">فَسَبِّحْ بِحَمْدِ رَبِّكَ <span class="target-word">وَاسْتَغْفِرْهُ</span> <span class="ayah-marker" onclick="playAudio('110003', this)">﴿٣﴾</span></div></div>
+                                <div class="example-card" onclick="toggleReveal(this)"><div class="card-info-side"><span class="reveal-indicator">الصاد</span></div><div class="quran-text">وَالَّذِينَ آمَنُوا وَعَمِلُوا <span class="target-word">الصَّالِحَاتِ</span> <span class="ayah-marker" onclick="playAudio('002025', this)">﴿٢٥﴾</span></div></div>
+                                <div class="example-card" onclick="toggleReveal(this)"><div class="card-info-side"><span class="reveal-indicator">السين</span></div><div class="quran-text">بِسْمِ اللَّهِ الرَّحْمَٰنِ <span class="target-word">الرَّحِيمِ</span> <span class="ayah-marker" onclick="playAudio('001001', this)">﴿١！】</span></div></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="makhraj-section-container" id="sect-shafah">
+                        <div class="letter-selector-bar">
+                            <button class="letter-btn selected" onclick="selectLetter('shafah', 'shafah', this)">ب-م-و-ف</button>
+                        </div>
+                        <div class="letter-detail-card active" id="card-shafah-shafah">
+                            <div class="flow-card">
+                                <h3 class="rule-title-large" style="color:var(--color-shafah)">مخرج الشفتين بالكامل</h3>
+                                <div class="academic-def">انطباق الشفتين (الباء والميم)، انضمامهما (الواو)، بطن الشفة مع الثنايا العليا (الفاء).</div>
+                                <div class="arrow-flow-block">
+                                    <div class="flow-line"><span class="highlight">ببساطة:</span><span>الشفايف بتقفل خالص في الباء والميم، وبتتضم في الواو، وسنانك اللي فوق بتخبط تحت في الفاء!</span></div>
+                                </div>
+                            </div>
+                            <div class="examples-grid">
+                                <div class="example-card" onclick="toggleReveal(this)"><div class="card-info-side"><span class="reveal-indicator">الباء</span></div><div class="quran-text">تَبَّتْ يَدَا أَبِي <span class="target-word">لَهَبٍ</span> وَتَبَّ <span class="ayah-marker" onclick="playAudio('111001', this)">﴿١﴾</span></div></div>
+                                <div class="example-card" onclick="toggleReveal(this)"><div class="card-info-side"><span class="reveal-indicator">الميم</span></div><div class="quran-text"><span class="target-word">مَالِكِ</span> يَوْمِ الدِّينِ <span class="ayah-marker" onclick="playAudio('001004', this)">﴿٤﴾</span></div></div>
+                                <div class="example-card" onclick="toggleReveal(this)"><div class="card-info-side"><span class="reveal-indicator">الفاء</span></div><div class="quran-text">أَلَمْ تَرَ كَيْفَ فَعَلَ رَبُّكَ بِأَصْحَابِ <span class="target-word">الْفِيلِ</span> <span class="ayah-marker" onclick="playAudio('105001', this)">﴿١﴾</span></div></div>
+                                <div class="example-card" onclick="toggleReveal(this)"><div class="card-info-side"><span class="reveal-indicator">الواو</span></div><div class="quran-text">قُلْ هُوَ اللَّهُ أَحَدٌ <span class="ayah-marker" onclick="playAudio('112001', this)">﴿١﴾</span></div></div>
+                                <div class="example-card" onclick="toggleReveal(this)"><div class="card-info-side"><span class="reveal-indicator">الميم</span></div><div class="quran-text">الَّذِي أَطْعَمَهُم مِّـن <span class="target-word">جُوعٍ</span> <span class="ayah-marker" onclick="playAudio('106004', this)">﴿٤﴾</span></div></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="makhraj-section-container" id="sect-khayshoom">
+                        <div class="letter-selector-bar">
+                            <button class="letter-btn selected" onclick="selectLetter('khayshoom', 'ghunnah', this)">غُنَّة</button>
+                        </div>
+                        <div class="letter-detail-card active" id="card-khayshoom-ghunnah">
+                            <div class="flow-card">
+                                <h3 class="rule-title-large" style="color:var(--color-khayshoom)">مخرج الخيشوم (صوت الغنة حركتين)</h3>
+                                <div class="academic-def">الخيشوم هو التجويف الأنفى الداخلي الممتد فوق غار الحنك، وهو مخرج صفة الغنة لا حروف مستقلة.</div>
+                                <div class="arrow-flow-block">
+                                    <div class="flow-line"><span class="highlight">ببساطة:</span><span>صوت رخيم زمني بيطلع من مناخيرك ميكملش نطق النون والميم المشددتين من غيره!</span></div>
+                                </div>
+                            </div>
+                            <div class="examples-grid">
+                                <div class="example-card" onclick="toggleReveal(this)"><div class="card-info-side"><span class="reveal-indicator">غنة نون</span></div><div class="quran-text">فَإِنَّ مَعَ الْعُسْرِ <span class="target-word">يُسْرًا</span> <span class="ayah-marker" onclick="playAudio('094005', this)">﴿٥﴾</span></div></div>
+                                <div class="example-card" onclick="toggleReveal(this)"><div class="card-info-side"><span class="reveal-indicator">غنة ميم</span></div><div class="quran-text">عَمَّ <span class="target-word">يَتَسَاءَلُونَ</span> <span class="ayah-marker" onclick="playAudio('078001', this)">﴿١﴾</span></div></div>
+                                <div class="example-card" onclick="toggleReveal(this)"><div class="card-info-side"><span class="reveal-indicator">غنة نون</span></div><div class="quran-text">مِنَ الْجِنَّةِ <span class="target-word">وَالنَّاسِ</span> <span class="ayah-marker" onclick="playAudio('114006', this)">﴿٦﴾</span></div></div>
+                                <div class="example-card" onclick="toggleReveal(this)"><div class="card-info-side"><span class="reveal-indicator">غنة ميم</span></div><div class="quran-text">فَأَمَّا مَنْ <span class="target-word">أَعْطَىٰ</span> وَاتَّقَىٰ <span class="ayah-marker" onclick="playAudio('092005', this)">﴿٥﴾</span></div></div>
+                                <div class="example-card" onclick="toggleReveal(this)"><div class="card-info-side"><span class="reveal-indicator">غنة نون</span></div><div class="quran-text">إِنَّا أَعْطَيْنَاكَ <span class="target-word">الْكَوْثَرَ</span> <span class="ayah-marker" onclick="playAudio('108001', this)">﴿١﴾</span></div></div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // تفعيل الغلاف المحمي فور تخطي اختبار الحماية الصارم
+        document.getElementById('academy-shell').style.display = 'flex';
+
+        // --- قاعدة البيانات الرياضية لمنحنيات اللسان الفائقة (SVG Advanced Vectors Map) ---
+        const tongueShapes = {
+            jawf: "M 86,160 C 100,160 140,165 190,170 C 240,175 270,220 270,260 C 255,275 210,250 160,205 C 120,185 86,175 86,160 Z",
+            halq_aqsa: "M 86,160 C 100,165 130,170 170,180 C 210,190 285,185 285,255 C 275,270 210,255 160,205 C 120,185 86,175 86,160 Z",
+            halq_wasat: "M 86,160 C 100,162 135,168 175,175 C 215,185 280,210 280,258 C 265,272 210,255 160,205 C 120,185 86,175 86,160 Z",
+            halq_adna: "M 86,160 C 100,160 135,165 180,170 C 225,175 272,215 272,260 C 255,275 210,252 160,205 C 120,185 86,175 86,160 Z",
+            lisan_qaf: "M 86,160 C 100,150 135,160 215,105 C 265,115 270,220 270,260 C 255,275 210,250 160,205 C 120,185 86,175 86,160 Z",
+            lisan_kaf: "M 86,160 C 100,145 145,145 200,100 C 250,115 270,220 270,260 C 255,275 210,250 160,205 C 120,185 86,175 86,160 Z",
+            lisan_shajariya: "M 86,150 C 100,145 155,100 210,165 C 250,175 270,220 270,260 C 255,275 210,250 160,205 C 120,185 86,175 86,160 Z",
+            lisan_taraf: "M 78,112 C 100,135 140,165 190,170 C 240,175 270,220 270,260 C 255,275 210,250 160,205 C 120,185 86,175 86,160 Z",
+            lisan_asliya: "M 84,142 C 100,155 140,165 190,170 C 240,175 270,220 270,260 C 255,275 210,250 160,205 C 120,185 86,175 86,160 Z",
+            shafah: "M 86,160 C 100,160 140,165 190,170 C 240,175 270,220 270,260 C 255,275 210,250 160,205 C 120,185 86,175 86,160 Z"
+        };
+
+        const statusTexts = {
+            jawf_madd: "مخرج الجوف الحالي: اللسان مستفل في قاع الفم، والتجويف مفتوح كلياً لتمرير الهواء 💤",
+            halq_aqsa: "مخرج أقصى الحلق: جذر اللسان يتراجع مقترباً من الأوتار الصوتية العميقة 🛑",
+            halq_wasat: "مخرج وسط الحلق: لسان المزمار يضغط لورا في منتصف الحلق بالظبط لتضييق المخرج ⚡",
+            halq_adna: "مخرج أدنى الحلق: جذر اللسان يرتفع قليلاً عند منطقة الغين والخاء قريباً من اللهاة ⌂",
+            lisan_qaf: "مخرج القاف: أقصى اللسان يرتفع بالكامل ليقفل مع الحنك اللحمي الرخو صانعاً تفخيماً وقلقلة كبرى 💢",
+            lisan_kaf: "مخرج الكاف: أقصى اللسان يقفل مع الحنك العظمي الصلب متقدماً قليلاً عن مخرج القاف 🔎",
+            lisan_shajariya: "مخرج وسط اللسان: نص اللسان يرتفع كالقبة ليلتقي بوسط سقف الحنك (ج - ش - ي) ⁀",
+            lisan_taraf: "مخرج طرف اللسان: بوز اللسان من قدام يرتفع ويلتصق تماماً بأصول الثنايا العليا (ط - د - ت) ⇧",
+            lisan_asliya: "مخرج حروف الصفير: طرف اللسان يستقر أسفل خلف الثنايا السفلى مع تقعر الوسط (ص - س) ➴",
+            shafah_shafah: "مخرج الشفتين: الاعتماد الكلي على انطباق الشفتين أو تصادم الأسنان بالبث التفاعلي 👄",
+            khayshoom_ghunnah: "مخرج الخيشوم: ممر الحنك اللحمي يفتح لتمرير صوت الغنة الرخيم حركتين من الأنف 👃"
+        };
+
+        function switchMainTab(makhrajKey) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.makhraj-section-container').forEach(c => c.classList.remove('active'));
+
+            document.querySelector(`.tab-btn[data-main="${makhrajKey}"]`).classList.add('active');
+            const targetSection = document.getElementById(`sect-${makhrajKey}`);
+            targetSection.classList.add('active');
+
+            const firstSubBtn = targetSection.querySelector('.letter-btn');
+            if(firstSubBtn) firstSubBtn.click();
+        }
+
+        function selectLetter(makhrajKey, subKey, btnElement) {
+            if(btnElement) {
+                btnElement.parentNode.querySelectorAll('.letter-btn').forEach(b => b.classList.remove('selected'));
+                btnElement.classList.add('selected');
+            }
+
+            btnElement.parentNode.parentNode.querySelectorAll('.letter-detail-card').forEach(c => c.classList.remove('active'));
+            document.getElementById(`card-${makhrajKey}-${subKey}`).classList.add('active');
+
+            document.querySelectorAll('.glow-point').forEach(p => p.classList.remove('active-glow', 'active-emit'));
+
+            const shapeKey = `${makhrajKey}_${subKey}`;
+            const tonguePath = tongueShapes[shapeKey] || tongueShapes[makhrajKey];
+            document.getElementById('tongue').setAttribute('d', tonguePath);
+
+            let glowId = null;
+            if (subKey === 'madd') glowId = 'glow-jawf';
+            else if (subKey === 'aqsa' && makhrajKey === 'halq') glowId = 'glow-halq-aqsa';
+            else if (subKey === 'wasat' && makhrajKey === 'halq') glowId = 'glow-halq-wasat';
+            else if (subKey === 'adna' && makhrajKey === 'halq') glowId = 'glow-halq-adna';
+            else if (subKey === 'qaf') glowId = 'glow-aqsa';
+            else if (subKey === 'kaf') glowId = 'glow-aqsa';
+            else if (subKey === 'shajariya') glowId = 'glow-wasat';
+            else if (subKey === 'taraf' || subKey === 'asliya') glowId = 'glow-taraf';
+            else if (makhrajKey === 'shafah') glowId = 'glow-shafah';
+            else if (makhrajKey === 'khayshoom') glowId = 'glow-khayshoom';
+
+            if(glowId) {
+                document.getElementById(glowId).classList.add('active-emit');
+            }
+
+            const statusLabel = statusTexts[shapeKey] || statusTexts[`${makhrajKey}_shafah`] || "مخرج نَشِط";
+            document.getElementById('visual-dynamic-status').innerText = statusLabel;
+        }
+
+        function toggleReveal(cardElement) {
+            cardElement.classList.toggle('revealed');
+        }
+
+        let currentAudio = null;
+        let activeMarker = null;
+
+        function playAudio(ayahKey, markerElement) {
+            if(event) event.stopPropagation();
+
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+            }
+            document.querySelectorAll('.ayah-marker').forEach(m => m.classList.remove('playing'));
+
+            let surahNum = ayahKey.substring(0, 3);
+            let ayahNum = ayahKey.substring(3, 6);
+            let audioUrl = `https://everyayah.com/data/Husary_128kbps/${surahNum}${ayahNum}.mp3`;
+
+            currentAudio = new Audio(audioUrl);
+            activeMarker = markerElement;
+            activeMarker.classList.add('playing');
+
+            currentAudio.addEventListener('ended', () => {
+                activeMarker.classList.remove('playing');
+            });
+
+            currentAudio.play().catch(err => console.log("خطأ بتشغيل صوت المخرج:", err));
+        }
+    </script>
+</body>
+</html>

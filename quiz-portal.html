@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>منصة تلقيٰ | بوابة الاختبارات والقياس التفاعلية</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght=400;500;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* امتصاص كامل ونقي للهوية اللونية المشرقة المعتمدة من ملف الاندكس */
+            --bg-main: #ffffff;
+            --bg-sub: #f8fafc;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --primary: #0284c7;
+            --primary-hover: #0369a1;
+            --badge-bg: rgba(2, 132, 199, 0.06);
+            --badge-text: #0284c7;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-sub);
+            font-family: 'Tajawal', sans-serif;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        .protected-shell {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        /* شريط التنقل العلوي الفخم */
+        .navbar {
+            background: var(--bg-main);
+            border-bottom: 1px solid var(--border);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.01);
+        }
+
+        .nav-right-zone {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .btn-back-hub {
+            background: var(--bg-sub);
+            border: 1px solid var(--border);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 12px;
+            cursor: pointer;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+        .btn-back-hub:hover {
+            background-color: var(--border);
+            color: var(--primary);
+        }
+
+        .nav-logo {
+            font-size: 18px;
+            font-weight: 900;
+            color: var(--text-main);
+        }
+        .nav-logo span { color: var(--primary); }
+
+        .score-display-node {
+            background: rgba(2, 132, 199, 0.08);
+            color: var(--primary);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 800;
+            border: 1px solid rgba(2, 132, 199, 0.15);
+        }
+
+        /* الكرت الترحيبي التعريفي للبوابة */
+        .hero-banner {
+            max-width: 1200px;
+            width: 100%;
+            margin: 40px auto 10px auto;
+            padding: 0 20px;
+        }
+
+        .welcome-card {
+            background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+            border-radius: 24px;
+            padding: 35px;
+            color: white;
+            box-shadow: 0 10px 30px rgba(2,132,199,0.1);
+        }
+
+        .welcome-card h1 { font-size: 26px; font-weight: 900; margin-bottom: 8px; }
+        .welcome-card p { color: #e0f2fe; font-size: 14px; font-weight: 500; max-width: 750px; line-height: 1.6; }
+
+        /* شريط التبويبات للفرز القياسي السلس لكروت الاختبارات الـ 22 */
+        .filter-wrapper {
+            max-width: 1200px;
+            width: 100%;
+            margin: 25px auto 0 auto;
+            padding: 0 20px;
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+        .filter-wrapper::-webkit-scrollbar { display: none; }
+
+        .filter-btn {
+            background: var(--bg-main);
+            border: 1px solid var(--border);
+            padding: 12px 22px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            transform: translateY(-1px);
+        }
+
+        /* وعاء عناقيد كروت بطاقات الاختبارات الفرعية */
+        .grid-wrapper {
+            max-width: 1200px;
+            width: 100%;
+            margin: 25px auto 60px auto;
+            padding: 0 20px;
+        }
+
+        .quiz-pack-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .quiz-group-node {
+            display: none;
+            grid-column: 1 / -1;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .quiz-group-node.active { display: grid; animation: panelFadeUp 0.4s ease forwards; }
+        @keyframes panelFadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* هندسة وتصميم كروت بطاقات الأحكام الفرعية المنتظرة للأسئلة */
+        .quiz-interactive-card {
+            background: var(--bg-main);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 26px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 210px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.01);
+        }
+        .quiz-interactive-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 25px -5px rgba(2,132,199,0.06);
+        }
+
+        .quiz-card-top {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .quiz-card-badge {
+            align-self: flex-start;
+            font-size: 11px;
+            font-weight: 800;
+            padding: 4px 12px;
+            border-radius: 30px;
+            background: var(--badge-bg);
+            color: var(--badge-text);
+        }
+
+        .quiz-title {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--text-main);
+            line-height: 1.5;
+        }
+
+        .quiz-desc {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        .quiz-card-footer {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 14px;
+            border-top: 1px solid var(--bg-sub);
+        }
+
+        .quiz-index {
+            font-size: 12px;
+            font-weight: 900;
+            color: var(--text-muted);
+            background: var(--bg-sub);
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .quiz-action-arrow {
+            color: var(--primary);
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 13px;
+            transition: transform 0.2s ease;
+        }
+        .quiz-interactive-card:hover .quiz-action-arrow { transform: translateX(-4px); }
+    </style>
+    <script>
+        if (localStorage.getItem("talqi_authenticated") !== "true") {
+            window.location.href = "../index.html";
+        }
+        var savedPlatformRole = localStorage.getItem("talqi_role") || "student";
+    </script>
+</head>
+<body>
+
+    <div class="protected-shell">
+        <nav class="navbar">
+            <div class="nav-right-zone">
+                <button class="btn-back-hub" onclick="returnToProperDashboard()">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                    <span>لوحة التحكم</span>
+                </button>
+                <div class="nav-logo">منصة تَلَقَّىٰ | <span>بوابة بنوك وعينات الاختبارات</span></div>
+            </div>
+            <div class="score-display-node" id="quiz-status-tag">جاهز لتلقي الاختبارات</div>
+        </nav>
+
+        <div class="hero-banner">
+            <div class="welcome-card">
+                <h1>بطاقات الفرز الموضوعي الـ ٢٢ للاختبارات</h1>
+                <p>مرحباً بكِ في البوابة الشاملة لبنوك الأسئلة والقياس. تم بناء ٢٢ بطاقة مخصصة ومطابقة لكافة دروس ومناهج الأكاديمية بالترتيب، انقري على أي بطاقة لتنتقلي فوراً لملف اختبارها المستقل.</p>
+            </div>
+        </div>
+
+        <div class="filter-wrapper">
+            <button class="filter-btn active" id="btn-quiz-intro" onclick="switchQuizCategory('intro')">مبادئ الأداء والمخارج</button>
+            <button class="filter-btn" id="btn-quiz-noon" onclick="switchQuizCategory('noon')">أحكام النون والميم</button>
+            <button class="filter-btn" id="btn-quiz-lamat" onclick="switchQuizCategory('lamat')">اللامات والراءات والغنة</button>
+            <button class="filter-btn" id="btn-quiz-mad" onclick="switchQuizCategory('mad')">علوم المدود</button>
+            <button class="filter-btn" id="btn-quiz-rules" onclick="switchQuizCategory('rules')">الساكنين والمستثنيات</button>
+        </div>
+
+        <main class="grid-wrapper">
+            <div class="quiz-pack-container">
+
+                <div class="quiz-group-node active" id="quiz-node-intro">
+                    
+                    <div class="quiz-interactive-card" onclick="openTargetQuizFile('quiz-istiadha.html')">
+                        <div class="quiz-card-top">
+                            <div class="quiz-card-badge">مقرر ٠١</div>
+                            <div class="quiz-title">اختبار الاستعاذة والبسملة والوقف والابتداء</div>
+                            <div class="quiz-desc">بطاقة قياس مخصصة لأوجه الابتداء بالفواتح وحالات الفصل بين السور والوقف الجائز والقبيح.</div>
+                        </div>
+                        <div class="quiz-card-footer"><span class="quiz-index">٠١</span><span class="quiz-action-arrow">دخول الاختبار ←</span></div>
+                    </div>
+
+                    <div class="quiz-interactive-card" onclick="openTargetQuizFile('quiz-aaliat.html')">
+                        <div class="quiz-card-top">
+                            <div class="quiz-card-badge">مقرر ٠٢</div>
+                            <div class="quiz-title">اختبار آلية حدوث الحروف العربية</div>
+                            <div class="quiz-desc">بطاقة قياس مخصصة للتحقق من فهم حدوث الأصوات بالتصادم والتباعد والاهتزاز.</div>
+                        </div>
+                        <div class="quiz-card-footer"><span class="quiz-index">٠٢</span><span class="quiz-action-arrow">دخول الاختبار ←</span></div>
+                    </div>
+
+                    <div class="quiz-interactive-card" onclick="openTargetQuizFile('quiz-alaqat.html')">
+                        <div class="quiz-card-top">
+                            <div class="quiz-card-badge">مقرر ٠٣</div>
+                            <div class="quiz-title">اختبار علاقات الحروف العربية</div>
+                            <div class="quiz-desc">بطاقة قياس مخصصة لأحكام وتطبيقات المتماثلين، المتجانسين، المتقاربين، والمتباعدين.</div>
+                        </div>
+                        <div class="quiz-card-footer"><span class="quiz-index">٠٣</span><span class="quiz-action-arrow">دخول الاختبار ←</span></div>
+                    </div>
+
+                    <div class="quiz-interactive-card" onclick="openTargetQuizFile('quiz-makharij.html')">
+                        <div class="quiz-card-top">
+                            <div class="quiz-card-badge">مقرر ٠٤</div>
+                            <div class="quiz-title">اختبار مخارج الحروف العربية</div>
+                            <div class="quiz-desc">بطاقة قياس مخصصة لضبط وضمان خروج الحروف من الحلق، واللسان، والشفتين، والجوف.</div>
+                        </div>
+                        <div class="quiz-card-footer"><span class="quiz-index">٠٤</span><span class="quiz-action-arrow">دخول الاختبار ←</span></div>
+                    </div>
+
+                    <div class="quiz-interactive-card" onclick="openTargetQuizFile('quiz-sifat.html')">
+                        <div class="quiz-card-top">
+                            <div class="quiz-card-badge">مقرر ٠٥</div>
+                            <div class="quiz-title">اختبار صفات الحروف كاملة</div>
+                            <div class="quiz-desc">بطاقة قياس مخصصة لتمييز الصفات التي لها ضد والتي ليس لها ضد والهمس والجهر.</div>
+                        </div>
+                        <div class="quiz-card-footer"><span class="quiz-index">٠٥</span><span class="quiz-action-arrow">دخول الاختبار ←</span></div>
+                    </div>
+
+                </div>
+
+                <div class="quiz-group-node" id="quiz-node-noon">
+                    
+                    <div class="quiz-interactive-card" onclick="openTargetQuizFile('quiz-noon-tanween.html')">
+                        <div class="quiz-card-top">
+                            <div class="quiz-card-badge">مقرر ٠٦</div>
+                            <div class="quiz-title">اختبار أحكام النون الساكنة والتنوين</div>
+                            <div class="quiz-desc">بطاقة قياس مخصصة لأحكام الإظهار الحلقي، الإدغام، الإخفاء، والإقلاب أداءً ونطقاً.</div>
+                        </div>
+                        <div class="quiz-card-footer"><span class="quiz-index">٠٦</span><span class="quiz-action-arrow">دخول الاختبار ←</span></div>
+                    </div>
+
+                    <div class="quiz-interactive-card" onclick="openTargetQuizFile('quiz-meem-sakinah.html')">
+                        <div class="quiz-card-top">
+                            <div class="quiz-card-badge">مقرر ٠٧</div>
+                            <div class="quiz-title">اختبار أحكام الميم الساكنة</div>
+                            <div class="quiz-desc">بطاقة قياس مخصصة لأحكام الإخفاء الشفوي، إدغام المثلين الصغير، والإظهار الشفوي.</div>
+                        </div>
+                        <div class="quiz-card-footer"><span class="quiz-index">٠٧</span><span class="quiz-action-arrow">دخول الاختبار ←</span></div>
+                    </div>
+
+                </div>
+
+                <div class="quiz-group-node" id="quiz-node-lamat">
+                    
+                    <div class="quiz-interactive-card" onclick="openTargetQuizFile('quiz-lamat.html')">
+                        <div class="quiz-card-top">
+                            <div class="quiz-card-badge">مقرر ٠٨</div>
+                            <div class="quiz-title">اختبار أحكام اللامات الساكنة كاملة</div>
+                            <div class="quiz-desc">بطاقة قياس مخصصة لأحكام اللام القمرية، الشمسية، لامات الفعل والاسم والأمر.</div>
+                        </div>
+                        <div class="quiz-card-footer"><span class="quiz-index">٠٨</span><span class="quiz-action-arrow">دخول الاختبار ←</span></div>
+                    </div>
+
+                    <div class="quiz-interactive-card" onclick="openTargetQuizFile('quiz-ghunnah.html')">
+                        <div class="quiz-card-top">
+                            <div class="quiz-card-badge">مقرر ٠٩</div>
+                            <div class="quiz-title">اختبار مستويات وأحكام الغنة الزمانية</div>
+                            <div class="quiz-desc">بطاقة قياس مخصصة لمراتب الغنة الأربعة (الأكمل، الكاملة، الناقصة، والأنقص).</div>
+                        </div>
+                        <div class="quiz-card-footer"><span class="quiz-index">٠٩</span><span class="quiz-action-arrow">دخول الاختبار ←</span></div>
+                    </div>
+
+                    <div class="quiz-interactive-card" onclick="openTargetQuizFile('quiz-qalqalah.html')">
+                        <div class="quiz-card-top">
+                            <div class="quiz-card-badge">مقرر ١٠</div>
+                            <div class="quiz-title">اختبار أحكام ومراتب القلقلة</div>
+                            <div class="quiz-desc">بطاقة قياس مخصصة لاضطراب حروف قطب جد في مراتبها الكبرى والوسطى والصغرى.</div>
+                        </div>
+                        <div class="quiz-card-footer"><span class="quiz-index">١٠</span><span class="quiz-action-arrow">دخول الاختبار ←</span></div>
+                    </div>
+
+                    <div class="quiz-interactive-card" onclick="openTargetQuizFile('quiz-tafkheem.html')">
+                        <div class="quiz-card-top">
+                            <div class="quiz-card-badge">مقرر ١١</div>
+                            <div class="quiz-title">اختبار أحكام التفخيم والترقيق دائماً</div>
+                            <div class="quiz-desc">بطاقة قياس مخصصة لحروف الاستعلاء السبعة وحروف الاستفال والدائرة بين الحكمين.</div>
+                        </div>
+                        <div class="quiz-card-footer"><span class="quiz-index">١١</span><span class="quiz-action-arrow">دخول الاختبار ←</span></div>
+                    </div>
+
+                    <div class="quiz-interactive-card" onclick="openTargetQuizFile('quiz-raat.html')">
+                        <div class="quiz-card-top">
+                            <div class="quiz-card-badge">مقرر ١٢</div>
+                            <div class="quiz-title">اختبار أحكام الراءات بالتفصيل</div>
+                            <div class="quiz-desc">بطاقة قياس مخصصة لحالات تفخيم الراء الثمانية وترقيقها الأربعة وجواز الوجهين.</div>
+                        </div>
+                        <div class="quiz-card-footer"><span class="quiz-index">١٢</span><span class="quiz-action-arrow">دخول الاختبار ←</span></div>
+                    </div>
+
+                </div>
+
+                <div class="quiz-group-node" id="quiz-node-mad">
+                    
+                    <div class="quiz-interactive-card" onclick="openTargetQuizFile('quiz-mad-tabii.html')">
+                        <div class="quiz-card-top">
+                            <div class="quiz-card-badge">مقرر ١٣</div>
+                            <div class="quiz-title">اختبار المد الطبيعي (الأصلي) وملحقاته</div>
+                            <div class="quiz-desc">بطاقة قياس مخصصة للمد الأصلي الكلمي والحرفي، ومد العوض والتمكين والصلة الصغرى.</div>
+                        </div>
+                        <div class="quiz-card-footer"><span class="quiz-index">١٣</span><span class="quiz-action-arrow">دخول الاختبار ←</span></div>
+                    </div>
+
+                    <div class="quiz-interactive-card" onclick="openTargetQuizFile('quiz-mad-hamzah.html')">
+                        <div class="quiz-card-top">
+                            <div class="quiz-card-badge">مقرر ١٤</div>
+                            <div class="quiz-title">اختبار المد الفرعي بسبب الهمز واجتماعه</div>
+                            <div class="quiz-desc">بطاقة قياس مخصصة للمد الواجب المتصل، الجائز المنفصل، مد البدل والصلة الكبرى.</div>
+                        </div>
+                        <div class="quiz-card-footer"><span class="quiz-index">١٤</span><span class="quiz-action-arrow">دخول الاختبار ←</span></div>
+                    </div>
+
+                    <div class="quiz-interactive-card" onclick="openTargetQuizFile('quiz-mad-sukoon.html')">
+                        <div class="quiz-card-top">
+                            <div class="quiz-card-badge">مقرر ١٥</div>
+                            <div class="quiz-title">اختبار المد الفرعي بسبب السكون واجتماعه</div>
+                            <div class="quiz-desc">بطاقة قياس مخصصة للمد اللازم الكلمي والحرفي، العارض للسكون ومد اللين.</div>
+                        </div>
+                        <div class="quiz-card-footer"><span class="quiz-index">١٥</span><span class="quiz-action-arrow">دخول الاختبار ←</span></div>
+                    </div>
+
+                    <div class="quiz-interactive-card" onclick="openTargetQuizFile('quiz-aqwa-sababayn.html')">
+                        <div class="quiz-card-top">
+                            <div class="quiz-card-badge">مقرر ١٦</div>
+                            <div class="quiz-title">اختبار قاعدة هرم أقوى السببين للمد</div>
+                            <div class="quiz-desc">بطاقة قياس مخصصة لميزان العمل بالسبب الأقوى وإلغاء الأضعف عند اجتماع حكمين.</div>
+                        </div>
+                        <div class="quiz-card-footer"><span class="quiz-index">١٦</span><span class="quiz-action-arrow">دخول الاختبار ←</span></div>
+                    </div>
+
+                </div>
+
+                <div class="quiz-group-node" id="quiz-node-rules">
+                    
+                    <div class="quiz-interactive-card" onclick="openTargetQuizFile('quiz-sakynayn.html')">
+                        <div class="quiz-card-top">
+                            <div class="quiz-card-badge">مقرر ١٧</div>
+                            <div class="quiz-title">اختبار قاعدة أحكام التقاء الساكنين</div>
+                            <div class="quiz-desc">بطاقة قياس مخصصة لآلية تخلص العرب من تجمع الساكنين بالحذف أو بالتحريك.</div>
+                        </div>
+                        <div class="quiz-card-footer"><span class="quiz-index">١٧</span><span class="quiz-action-arrow">دخول الاختبار ←</span></div>
+                    </div>
+
+                    <div class="quiz-interactive-card" onclick="openTargetQuizFile('quiz-nabr.html')">
+                        <div class="quiz-card-top">
+                            <div class="quiz-card-badge">مقرر ١٨</div>
+                            <div class="quiz-title">اختبار أحكام ومواضع النبر الصوتي</div>
+                            <div class="quiz-desc">بطاقة قياس مخصصة لمواضع الضغط المقطعي لحماية الحروف الساكنة من السقوط.</div>
+                        </div>
+                        <div class="quiz-card-footer"><span class="quiz-index">١٨</span><span class="quiz-action-arrow">دخول الاختبار ←</span></div>
+                    </div>
+
+                    <div class="quiz-interactive-card" onclick="openTargetQuizFile('quiz-hamzatayn.html')">
+                        <div class="quiz-card-top">
+                            <div class="quiz-card-badge">مقرر ١٩</div>
+                            <div class="quiz-title">اختبار أحكام همزتي الوصل والقطع</div>
+                            <div class="quiz-desc">بطاقة قياس مخصصة لقواعد حركة البدء بهمزة الوصل وثبوت همزة القطع.</div>
+                        </div>
+                        <div class="quiz-card-footer"><span class="quiz-index">١٩</span><span class="quiz-action-arrow">دخول الاختبار ←</span></div>
+                    </div>
+
+                    <div class="quiz-interactive-card" onclick="openTargetQuizFile('quiz-waqf-awakhir.html')">
+                        <div class="quiz-card-top">
+                            <div class="quiz-card-badge">مقرر ٢٠</div>
+                            <div class="quiz-title">اختبار الوقف على أواخر الكلم بالتفصيل</div>
+                            <div class="quiz-desc">بطاقة قياس مخصصة لأوجه الوقف بالسكون المحض، الروم، والإشمام وموانعهما.</div>
+                        </div>
+                        <div class="quiz-card-footer"><span class="quiz-index">٢٠</span><span class="quiz-action-arrow">دخول الاختبار ←</span></div>
+                    </div>
+
+                    <div class="quiz-interactive-card" onclick="openTargetQuizFile('quiz-maqtoo-mausool.html')">
+                        <div class="quiz-card-top">
+                            <div class="quiz-card-badge">مقرر ٢١</div>
+                            <div class="quiz-title">اختبار المقطوع والموصول وتاءات التأنيث</div>
+                            <div class="quiz-desc">بطاقة قياس مخصصة لرسم الكلمات المنفصلة وحكم الوقف على التاء المبسوطة والمربوطة.</div>
+                        </div>
+                        <div class="quiz-card-footer"><span class="quiz-index">٢١</span><span class="quiz-action-arrow">دخول الاختبار ←</span></div>
+                    </div>
+
+                    <div class="quiz-interactive-card" onclick="openTargetQuizFile('quiz-mustathniat.html')">
+                        <div class="quiz-card-top">
+                            <div class="quiz-card-badge">مقرر ٢٢</div>
+                            <div class="quiz-title">اختبار مستثنيات رواية حفص الفرشية</div>
+                            <div class="quiz-desc">بطاقة قياس مخصصة لمواضع الإمالة والتسهيل وقاعدة الصاد والسين وياءات الزوائد.</div>
+                        </div>
+                        <div class="quiz-card-footer"><span class="quiz-index">٢٢</span><span class="quiz-action-arrow">دخول الاختبار ←</span></div>
+                    </div>
+
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // التبديل الحركي الناعم والمريح للعين بين أقسام وعناقيد كروت بطاقات الاختبارات الـ 22
+        function switchQuizCategory(categoryId) {
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.quiz-group-node').forEach(node => node.classList.remove('active'));
+
+            document.getElementById('btn-quiz-' + categoryId).classList.add('active');
+            document.getElementById('quiz-node-' + categoryId).classList.add('active');
+        }
+
+        // دالة مرنة ومستقلة لتوجيه الطالب لملف السؤال الفرعي الخاص بالبطاقة المحددة مستقبلاً
+        function openTargetQuizFile(quizFileName) {
+            window.location.href = quizFileName;
+        }
+
+        // محرك الرجوع المقاوم للكراش: يعيد الطالبة بدقة متناهية وحتمية للوحة الصحيحة التي انطلقت منها
+        function returnToProperDashboard() {
+            if (savedPlatformRole === "teacher_samia") {
+                window.location.href = "../dar_kholod/dashboard-kholod.html";
+            } else if (savedPlatformRole === "teacher_eman") {
+                window.location.href = "../eman_academy/dashboard-eman.html";
+            } else {
+                window.location.href = "dashboard.html";
+            }
+        }
+    </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title></title>
+</head>
+
+<body>
+  
+</body>
+
+</html>

@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>منصة تلقيٰ الرقمية | أحكام الميم الساكنة</title>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght=400;700&family=Tajawal:wght=400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-main: #ffffff;
+            --bg-sub: #f8fafc;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --primary: #0284c7;
+            
+            /* ألوان أحكام الميم الساكنة الدلالية المعتمدة برصانة */
+            --color-ikhfaa-sh: #0d9488;
+            --color-idgham-sh: #2563eb;
+            --color-izhar-sh: #475569;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-sub);
+            font-family: 'Tajawal', sans-serif;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* حماية المسار الفوري لمنع وميض المحتوى قبل التحقق الأمني */
+        .protected-shell {
+            display: none;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        /* شريط التنقل العلوي المطور للموسوعة التفاعلية */
+        .navbar {
+            background: var(--bg-main);
+            border-bottom: 1px solid var(--border);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 2000;
+        }
+
+        .nav-right-zone {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .nav-logo {
+            font-size: 18px;
+            font-weight: 900;
+            color: var(--text-main);
+        }
+        .nav-logo span { color: var(--primary); }
+
+        .btn-back-hub {
+            background: var(--bg-sub);
+            border: 1px solid var(--border);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 12px;
+            cursor: pointer;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+        .btn-back-hub:hover {
+            background-color: var(--border);
+            color: var(--primary);
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            color: var(--text-muted);
+        }
+
+        .tab-btn.active[data-target="ikhfaa-sh"] { background: var(--color-ikhfaa-sh); color: white; border-color: var(--color-ikhfaa-sh); }
+        .tab-btn.active[data-target="idgham-sh"] { background: var(--color-idgham-sh); color: white; border-color: var(--color-idgham-sh); }
+        .tab-btn.active[data-target="izhar-sh"] { background: var(--color-izhar-sh); color: white; border-color: var(--color-izhar-sh); }
+
+        /* منطقة الشرح والبطاقات الرئيسية */
+        .workspace-wrapper {
+            flex-grow: 1;
+            position: relative;
+            width: 100vw;
+            padding: 40px 20px;
+            overflow-y: auto;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        /* كروت الشرح والمحتوى العلمي المفصل */
+        .content-container {
+            width: 100%;
+            max-width: 1100px;
+            display: none;
+            flex-direction: column;
+            gap: 35px;
+            position: relative;
+            z-index: 100;
+            padding-bottom: 40px;
+        }
+
+        .content-container.active { display: flex; animation: slideUp 0.4s ease; }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .flow-card {
+            background: var(--bg-main);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+        }
+
+        .rule-title-large {
+            font-size: 24px;
+            font-weight: 800;
+            margin: 0 0 15px 0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .ikhfaa-txt { color: var(--color-ikhfaa-sh); }
+        .idgham-txt { color: var(--color-idgham-sh); }
+        .izhar-txt { color: var(--color-izhar-sh); }
+
+        .academic-def {
+            font-size: 16px;
+            color: var(--text-main);
+            font-weight: 700;
+            line-height: 1.7;
+            margin-bottom: 25px;
+            border-right: 4px solid var(--border);
+            padding-right: 15px;
+        }
+
+        .arrow-flow-block {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background: var(--bg-sub);
+            padding: 25px;
+            border-radius: 16px;
+            margin-top: 15px;
+        }
+
+        .flow-line {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            line-height: 1.6;
+        }
+
+        .flow-line span.highlight {
+            color: var(--primary);
+            background: rgba(2, 132, 199, 0.08);
+            padding: 4px 12px;
+            border-radius: 8px;
+            white-space: nowrap;
+        }
+
+        .flow-arrow {
+            color: var(--text-muted);
+            font-weight: bold;
+            padding: 0 5px;
+        }
+
+        /* gap الحروف التوضيحية */
+        .visual-equation {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .eq-box {
+            background: var(--bg-main);
+            border: 2px solid var(--border);
+            padding: 15px 30px;
+            border-radius: 16px;
+            font-size: 18px;
+            font-weight: 800;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.02);
+        }
+        .eq-box.outcome { color: white; border: none; }
+        .ikhfaa-bg { background: var(--color-ikhfaa-sh); }
+        .idgham-bg { background: var(--color-idgham-sh); }
+        .izhar-bg { background: var(--color-izhar-sh); }
+
+        .eq-letters {
+            display: flex;
+            gap: 10px;
+            font-size: 16px;
+            color: var(--primary);
+            font-weight: 800;
+            background: var(--bg-sub);
+            padding: 15px 30px;
+            border-radius: 50px;
+            border: 1px dashed var(--border);
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .eq-letter-node {
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .sub-details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .detail-card {
+            background: var(--bg-sub);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px;
+        }
+
+        .detail-card h4 {
+            margin: 0 0 10px 0;
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .detail-card p {
+            margin: 0;
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* كتلة التدريب السمعي والتطبيقات */
+        .section-title-sub {
+            font-size: 16px;
+            font-weight: 800;
+            margin: 25px 0 10px 0;
+            color: var(--text-main);
+            border-right: 4px solid var(--primary);
+            padding-right: 10px;
+        }
+
+        .examples-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        .example-card {
+            background: var(--bg-main);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+        .example-card:hover { border-color: var(--primary); box-shadow: 0 6px 20px rgba(0,0,0,0.02); }
+
+        .card-info-side {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .quran-text {
+            font-family: 'Amiri', serif;
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--text-main);
+            user-select: none;
+            flex-grow: 1;
+            text-align: center;
+            line-height: 2;
+        }
+
+        .example-card .target-word {
+            position: relative;
+            padding: 0 6px;
+            border-bottom: 3px dashed #cbd5e1;
+            transition: all 0.3s;
+        }
+        
+        .example-card.revealed[data-type="ikhfaa-sh"] .target-word { color: var(--color-ikhfaa-sh); border-bottom-color: var(--color-ikhfaa-sh); font-weight: 800; }
+        .example-card.revealed[data-type="idgham-sh"] .target-word { color: var(--color-idgham-sh); border-bottom-color: var(--color-idgham-sh); font-weight: 800; }
+        .example-card.revealed[data-type="izhar-sh"] .target-word { color: var(--color-izhar-sh); border-bottom-color: var(--color-izhar-sh); font-weight: 800; }
+
+        .reveal-indicator {
+            font-size: 12px;
+            font-weight: 800;
+            color: var(--text-muted);
+            background: var(--bg-sub);
+            padding: 4px 12px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            align-self: flex-start;
+            white-space: nowrap;
+        }
+
+        .ayah-marker { 
+            color: #94a3b8; 
+            font-size: 0.85em; 
+            font-weight: normal; 
+            margin-right: 15px; 
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-block;
+            user-select: none;
+        }
+        .ayah-marker:hover { color: var(--primary); transform: scale(1.15); }
+        .ayah-marker.playing { color: #10b981; text-shadow: 0 0 15px rgba(16,185,129,0.6); }
+    </style>
+    <script>
+        if (localStorage.getItem("talqi_authenticated") !== "true" || localStorage.getItem("talqi_role") !== "admin_abdullah") {
+            window.location.href = "../index.html";
+        }
+    </script>
+</head>
+<body>
+
+    <div class="protected-shell" id="academy-shell">
+        <nav class="navbar">
+            <div class="nav-right-zone">
+                <button class="btn-back-hub" onclick="window.location.href='dashboard-abdullah.html'">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                    <span>لوحة المقررات</span>
+                </button>
+                <div class="nav-logo">تَلَقَّىٰ الأكاديمية | <span>أحكام الميم الساكنة</span></div>
+            </div>
+            <div class="nav-tabs">
+                <button class="tab-btn active" data-target="ikhfaa-sh" onclick="switchTab('ikhfaa-sh')">الإخفاء الشفوي</button>
+                <button class="tab-btn" data-target="idgham-sh" onclick="switchTab('idgham-sh')">إدغام المثلين الصغير</button>
+                <button class="tab-btn" data-target="izhar-sh" onclick="switchTab('izhar-sh')">الإظهار الشفوي</button>
+            </div>
+        </nav>
+
+        <div class="workspace-wrapper">
+            <div class="interactive-board" id="main-board">
+                
+                <div class="content-container active" id="content-ikhfaa-sh">
+                    <div class="flow-card">
+                        <h2 class="rule-title-large ikhfaa-txt">حُكْمُ الإِخْفَاءِ الشَّفَوِيِّ</h2>
+                        <div class="academic-def">النطق بالميم الساكنة بصفة بين الإظهار والإدغام، عارٍ عن التشديد، مع بقاء الغنة بمقدار حركتين.</div>
+                        
+                        <div class="arrow-flow-block">
+                            <div class="flow-line">
+                                <span class="highlight">ببساطة:</span>
+                                <span>هخفي الميم عند الشفتين بغنة ممدودة حركتين لما يجي بعدها حرف الباء!</span>
+                            </div>
+                            <div class="flow-line">
+                                <span class="highlight">امتى؟</span>
+                                <span>لو لقيت ميم ساكنة [ مْ ] في آخر الكلمة، وجاء بعدها مباشرة في أول الكلمة الثانية حرف الباء [ ب ].</span>
+                            </div>
+                        </div>
+
+                        <div class="visual-equation">
+                            <div class="eq-box">[ مْ ] ساكنة</div>
+                            <div class="flow-arrow">⟸ يليه حرف واحد فقط ⟸</div>
+                            <div class="eq-letters" style="color: var(--color-ikhfaa-sh);">
+                                <div class="eq-letter-node" style="border-color: var(--color-ikhfaa-sh);">ب</div>
+                            </div>
+                            <div class="flow-arrow">⟹ النتيجة ⟹</div>
+                            <div class="eq-box outcome ikhfaa-bg">إخفاء شفوي بغنة حركتين</div>
+                        </div>
+
+                        <div class="sub-details-grid">
+                            <div class="detail-card">
+                                <h4>لماذا سُمي شفوياً؟</h4>
+                                <p>لأن الميم والباء يخرجان من الشفتين (انطباق الشفتين)، ويؤدى بتلامس طبيعي خفيف للشفتين دون كزّ أو ضغط كلي.</p>
+                            </div>
+                            <div class="detail-card">
+                                <h4>حالة الغنة وزمنها</h4>
+                                <p><b>غنة كاملة:</b> تُمد بمقدار حركتين كاملتين وتخرج من الخيشوم (التجويف الأنفي) مرافقة لإخفاء الميم الشفوي.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-title-sub">أمثلة الآيات التطبيقية الخمس كاملة وبصوت الشيخ الحصري:</div>
+                    <div class="examples-grid">
+                        <div class="example-card" onclick="revealCard(this)" data-type="ikhfaa-sh" data-rule="ميم ساكنة + باء ⇐ إخفاء شفوي بغنة">
+                            <div class="card-info-side"><span class="reveal-indicator">الآية 1</span></div>
+                            <div class="quran-text">تَرْمِيهِم <span class="target-word">بِحِجَارَةٍ</span> مِّن سِجِّيلٍ <span class="ayah-marker" onclick="playAyahAudio('105004', this)">﴿٤﴾</span></div>
+                        </div>
+                        <div class="example-card" onclick="revealCard(this)" data-type="ikhfaa-sh" data-rule="ميم ساكنة + باء ⇐ إخفاء شفوي حركتين">
+                            <div class="card-info-side"><span class="reveal-indicator">الآية 2</span></div>
+                            <div class="quran-text">إِنَّ رَبَّهُم <span class="target-word">بِهِمْ</span> يَوْمَئِذٍ لَّخَبِيرٌ <span class="ayah-marker" onclick="playAyahAudio('100011', this)">﴿١١﴾</span></div>
+                        </div>
+                        <div class="example-card" onclick="revealCard(this)" data-type="ikhfaa-sh" data-rule="ميم ساكنة + باء ⇐ تلامس طبيعي للشفتين">
+                            <div class="card-info-side"><span class="reveal-indicator">الآية 3</span></div>
+                            <div class="quran-text">لَّسْتَ عَلَيْهِم <span class="target-word">بِمُصَيْـ</span>طِرٍ <span class="ayah-marker" onclick="playAyahAudio('088022', this)">﴿٢٢﴾</span></div>
+                        </div>
+                        <div class="example-card" onclick="revealCard(this)" data-type="ikhfaa-sh" data-rule="ميم ساكنة + باء ⇐ غنة من الخيشوم حركتين">
+                            <div class="card-info-side"><span class="reveal-indicator">الآية 4</span></div>
+                            <div class="quran-text">وَمَا صَاحِبُكُم <span class="target-word">بِمَجْـ</span>نُونٍ <span class="ayah-marker" onclick="playAyahAudio('081022', this)">﴿٢٢﴾</span></div>
+                        </div>
+                        <div class="example-card" onclick="revealCard(this)" data-type="ikhfaa-sh" data-rule="ميم ساكنة + باء ⇐ إخفاء شفوي">
+                            <div class="card-info-side"><span class="reveal-indicator">الآية 5</span></div>
+                            <div class="quran-text">أَلَمْ يَعْلَم <span class="target-word">بِأَنَّ</span> اللَّهَ يَرَىٰ <span class="ayah-marker" onclick="playAyahAudio('096014', this)">﴿١٤﴾</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-container" id="content-idgham-sh">
+                    <div class="flow-card">
+                        <h2 class="rule-title-large idgham-txt">حُكْمُ إِدْغَامِ المِثْلَيْنِ الصَّغِيرِ</h2>
+                        <div class="academic-def">إدخال ميم ساكنة في ميم متحركة بعدها بحيث يصيران ميماً واحدة مشددة مع إظهار الغنة حركتين.</div>
+                        
+                        <div class="arrow-flow-block">
+                            <div class="flow-line">
+                                <span class="highlight">ببساطة:</span>
+                                <span>هدوب الميم الأولى الساكنة في الميم الثانية المتحركة وننطق ميم واحدة مشددة بغنة حركتين!</span>
+                            </div>
+                            <div class="flow-line">
+                                <span class="highlight">امتى؟</span>
+                                <span>لو لقيت ميم ساكنة في آخر الكلمة وجاء بعدها مباشرة ميم متحركة في أول الكلمة التالية.</span>
+                            </div>
+                        </div>
+
+                        <div class="visual-equation">
+                            <div class="eq-box">[ مْ ] ساكنة</div>
+                            <div class="flow-arrow">⟸ يليه حرف واحد مثله ⟸</div>
+                            <div class="eq-letters" style="color: var(--color-idgham-sh);">
+                                <div class="eq-letter-node" style="border-color: var(--color-idgham-sh);">م</div>
+                            </div>
+                            <div class="flow-arrow">⟹ النتيجة ⟹</div>
+                            <div class="eq-box outcome idgham-bg">ميم واحدة مشددة [ مّ ] بغنة</div>
+                        </div>
+
+                        <div class="sub-details-grid">
+                            <div class="detail-card">
+                                <h4>لماذا سُمي مِثْلَين صغيراً؟</h4>
+                                <p><b>مِثْلَين:</b> لكون الحرفين متماثلين اسماً ورسماً ومخرجاً (ميم وميم).<br><b>صغيراً:</b> لأن الحرف الأول ساكن والثاني متحرك.</p>
+                            </div>
+                            <div class="detail-card">
+                                <h4>حالة الغنة وزمنها</h4>
+                                <p><b>غنة أكمل ما تكون:</b> تطول بمقدار حركتين كاملتين تخرج من الخيشوم مصاحبة للحرف المشدد المتولد.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-title-sub">أمثلة الآيات التطبيقية الخمس كاملة وبصوت الشيخ الحصري:</div>
+                    <div class="examples-grid">
+                        <div class="example-card" onclick="revealCard(this)" data-type="idgham-sh" data-rule="ميم + ميم ⇐ إدغام مثلين صغير بغنة حركتين">
+                            <div class="card-info-side"><span class="reveal-indicator">الآية 1</span></div>
+                            <div class="quran-text">الَّذِي أَطْعَمَهُم <span class="target-word">مِّن جُ</span>وعٍ وَآمَنَهُم مِّنْ خَوْفٍ <span class="ayah-marker" onclick="playAyahAudio('106004', this)">﴿٤﴾</span></div>
+                        </div>
+                        <div class="example-card" onclick="revealCard(this)" data-type="idgham-sh" data-rule="ميم ساكنة + ميم متحركة ⇐ تشديد بغنة">
+                            <div class="card-info-side"><span class="reveal-indicator">الآية 2</span></div>
+                            <div class="quran-text">إِنَّهَا عَلَيْهِم <span class="target-word">مُّؤْصَـ</span>دَةٌ <span class="ayah-marker" onclick="playAyahAudio('104008', this)">﴿٨﴾</span></div>
+                        </div>
+                        <div class="example-card" onclick="revealCard(this)" data-type="idgham-sh" data-rule="ميم + ميم ⇐ إدغام شفوي">
+                            <div class="card-info-side"><span class="reveal-indicator">الآية 3</span></div>
+                            <div class="quran-text">وَاللَّهُ مِن وَرَائِهِم <span class="target-word">مُّحِيطٌ</span> <span class="ayah-marker" onclick="playAyahAudio('085020', this)">﴿٢٠﴾</span></div>
+                        </div>
+                        <div class="example-card" onclick="revealCard(this)" data-type="idgham-sh" data-rule="إدغام ميمين بغنة أكمل ما تكون">
+                            <div class="card-info-side"><span class="reveal-indicator">الآية 4</span></div>
+                            <div class="quran-text">فِي قُلُوبِهِم <span class="target-word">مَّرَضٌ</span> فَزَادَهُمُ اللَّهُ مَرَضًا <span class="ayah-marker" onclick="playAyahAudio('002010', this)">﴿١٠﴾</span></div>
+                        </div>
+                        <div class="example-card" onclick="revealCard(this)" data-type="idgham-sh" data-rule="ميم ساكنة أدغمت بالكامل في الميم المفتوحة">
+                            <div class="card-info-side"><span class="reveal-indicator">الآية 5</span></div>
+                            <div class="quran-text">فِيهَا بِإِذْنِ رَبِّهِم <span class="target-word">مِّن كُ</span>لِّ أَمْرٍ <span class="ayah-marker" onclick="playAyahAudio('097004', this)">﴿٤﴾</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-container" id="content-izhar-sh">
+                    <div class="flow-card">
+                        <h2 class="rule-title-large izhar-txt">حُكْمُ الإِظْهَارِ الشَّفَوِيِّ</h2>
+                        <div class="academic-def">إخراج الميم الساكنة من مخرجها نطقاً واضحاً صريحاً من غير زيادة في الغنة إذا وقع بعدها باقي الحروف.</div>
+                        
+                        <div class="arrow-flow-block">
+                            <div class="flow-line">
+                                <span class="highlight">ببساطة:</span>
+                                <span>هنطق الميم الساكنة واضحة ومظهرة تماماً من غير غنة ممدودة!</span>
+                            </div>
+                            <div class="flow-line">
+                                <span class="highlight">امتى؟</span>
+                                <span>لو لقيت ميم ساكنة وجاء بعدها أي حرف من حروف الهجاء الـ 26 المتبقية (كل الحروف عدا الباء والميم).</span>
+                            </div>
+                        </div>
+
+                        <div class="visual-equation">
+                            <div class="eq-box">[ مْ ] ساكنة</div>
+                            <div class="flow-arrow">⟸ يليهما ⟸</div>
+                            <div class="eq-letters" style="font-size: 15px; max-width: 450px; line-height: 1.5; padding: 12px; border-radius: 12px;">
+                                باقي حروف الهجاء الـ 26 (وأشدها وضوحاً عند حروفي الواو والفاء لقرب واتحاد المخرج)
+                            </div>
+                            <div class="flow-arrow">⟹ النتيجة ⟹</div>
+                            <div class="eq-box outcome izhar-bg">إظهار شفوي واضح قاطع</div>
+                        </div>
+
+                        <div class="sub-details-grid">
+                            <div class="detail-card">
+                                <h4>تحذير شديد للبث المباشر (الواو والفاء)</h4>
+                                <p>يجب الحذر من إخفاء الميم الساكنة إذا جاء بعدها <b>[ و ]</b> أو <b>[ ف ]</b> لقرب مخرج الفاء من الميم واتحاد مخرج الواو مع الميم بالشفتين.</p>
+                            </div>
+                            <div class="detail-card">
+                                <h4>حالة الغنة وزمنها</h4>
+                                <p><b>غنة ناقصة:</b> تقتصر على أصل الصفة الكامنة في جسم الميم الساكنة دون أي تطويل أو زيادة زمنية في صوتها.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-title-sub">أمثلة الآيات التطبيقية الخمس كاملة وبصوت الشيخ الحصري:</div>
+                    <div class="examples-grid">
+                        <div class="example-card" onclick="revealCard(this)" data-type="izhar-sh" data-rule="ميم ساكنة + تاء ⇐ إظهار شفوي واضح">
+                            <div class="card-info-side"><span class="reveal-indicator">الآية 1</span></div>
+                            <div class="quran-text">أَلَمْ تَرَ كَيْفَ فَعَلَ رَبُّكَ بِأَصْحَابِ الْفِيلِ <span class="ayah-marker" onclick="playAyahAudio('105001', this)">﴿١﴾</span></div>
+                        </div>
+                        <div class="example-card" onclick="revealCard(this)" data-type="izhar-sh" data-rule="ميم ساكنة + طاء ⇐ إظهار صريح">
+                            <div class="card-info-side"><span class="reveal-indicator">الآية 2</span></div>
+                            <div class="quran-text">وَأَرْسَلَ عَلَيْهِمْ طَيْرًا أَبَابِيلَ <span class="ayah-marker" onclick="playAyahAudio('105003', this)">﴿٣﴾</span></div>
+                        </div>
+                        <div class="example-card" onclick="revealCard(this)" data-type="izhar-sh" data-rule="ميم ساكنة + سين ⇐ إظهار شفوي في كلمتين">
+                            <div class="card-info-side"><span class="reveal-indicator">الآية 3</span></div>
+                            <div class="quran-text">الَّذِينَ هُمْ عَن صَلَاتِهِمْ سَاهُونَ <span class="ayah-marker" onclick="playAyahAudio('107005', this)">﴿٥﴾</span></div>
+                        </div>
+                        <div class="example-card" onclick="revealCard(this)" data-type="izhar-sh" data-rule="ميم ساكنة + راء ⇐ غنة ناقصة ونطق مظهر">
+                            <div class="card-info-side"><span class="reveal-indicator">الآية 4</span></div>
+                            <div class="quran-text">إِيلَافِهِمْ رِحْلَةَ الشِّتَاءِ وَالصَّيْفِ <span class="ayah-marker" onclick="playAyahAudio('106002', this)">﴿٢﴾</span></div>
+                        </div>
+                        <div class="example-card" onclick="revealCard(this)" data-type="izhar-sh" data-rule="تحذير خاص: ميم ساكنة + واو (وجوب الإظهار الشديد)">
+                            <div class="card-info-side"><span class="reveal-indicator">الآية 5</span></div>
+                            <div class="quran-text">صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ وَلَا الضَّالِّينَ <span class="ayah-marker" onclick="playAyahAudio('001007', this)">﴿٧﴾</span></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // تفعيل الغلاف المحمي فور تخطي اختبار الحماية الصارم
+        document.getElementById('academy-shell').style.display = 'flex';
+
+        // --- 1. متحكم الصوت المركزي الموحد لمنع تداخل القراءات والتلاوات ---
+        let currentAudio = null;
+        let activeMarker = null;
+
+        function playAyahAudio(ayahKey, markerElement) {
+            if (event) event.stopPropagation(); // منع انتقال الضغطة للكرت الخلفي وكشف الحكم
+
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+            }
+            document.querySelectorAll('.ayah-marker').forEach(m => m.classList.remove('playing'));
+
+            let surahNum = ayahKey.substring(0, 3);
+            let ayahNum = ayahKey.substring(3, 6);
+            let audioUrl = `https://everyayah.com/data/Husary_128kbps/${surahNum}${ayahNum}.mp3`;
+
+            currentAudio = new Audio(audioUrl);
+            activeMarker = markerElement;
+            activeMarker.classList.add('playing');
+
+            currentAudio.addEventListener('ended', () => {
+                activeMarker.classList.remove('playing');
+            });
+
+            currentAudio.play().catch(err => console.log("خطأ بتشغيل المقطع الصوتي للآية:", err));
+        }
+
+        // كشف الحكم التجويدي المخفي داخل كرت التطبيق العملي عند الضغط
+        function revealCard(cardElement) {
+            if (!cardElement.classList.contains('revealed')) {
+                cardElement.classList.add('revealed');
+                let ruleText = cardElement.getAttribute('data-rule');
+                cardElement.querySelector('.reveal-indicator').innerText = ruleText;
+                cardElement.querySelector('.reveal-indicator').style.color = 'var(--primary)';
+                cardElement.querySelector('.reveal-indicator').style.borderColor = 'var(--primary)';
+            } else {
+                cardElement.classList.remove('revealed');
+                let indicator = cardElement.querySelector('.reveal-indicator');
+                indicator.innerText = "الآية " + indicator.innerText.replace(/[^0-9]/g, '');
+                indicator.style.color = 'var(--text-muted)';
+                indicator.style.borderColor = 'var(--border)';
+            }
+        }
+
+        // تبديل لوحات العرض العلوية بنعومة وسلاسة تامة
+        function switchTab(targetId) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.content-container').forEach(c => c.classList.remove('active'));
+            
+            document.querySelector(`.tab-btn[data-target="${targetId}"]`).classList.add('active');
+            document.getElementById(`content-${targetId}`).classList.add('active');
+        }
+    </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title></title>
+</head>
+
+<body>
+  
+</body>
+
+</html>

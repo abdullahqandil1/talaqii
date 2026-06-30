@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>منصة تلقيٰ | رادار وعينات الأداء السمعي الموحد</title>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght=400;700&family=Tajawal:wght=400;500;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* امتصاص كامل ونقي للهوية اللونية المشرقة المعتمدة من ملف الاندكس */
+            --bg-main: #ffffff;
+            --bg-sub: #f8fafc;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --primary: #0284c7;
+            --primary-hover: #0369a1;
+            --badge-bg: rgba(2, 132, 199, 0.06);
+            --badge-text: #0284c7;
+            --success: #16a34a;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-sub);
+            font-family: 'Tajawal', sans-serif;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        .protected-shell {
+            display: none;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        /* شريط التنقل العلوي الفخم */
+        .navbar {
+            background: var(--bg-main);
+            border-bottom: 1px solid var(--border);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.01);
+        }
+
+        .nav-right-zone {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .btn-back-hub {
+            background: var(--bg-sub);
+            border: 1px solid var(--border);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 12px;
+            cursor: pointer;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+        .btn-back-hub:hover {
+            background-color: var(--border);
+            color: var(--primary);
+        }
+
+        .nav-logo {
+            font-size: 18px;
+            font-weight: 900;
+            color: var(--text-main);
+        }
+        .nav-logo span { color: var(--primary); }
+
+        /* الكرت الترحيبي العريض */
+        .hero-banner {
+            max-width: 1200px;
+            width: 100%;
+            margin: 40px auto 10px auto;
+            padding: 0 20px;
+        }
+
+        .welcome-card {
+            background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+            border-radius: 24px;
+            padding: 35px;
+            color: white;
+            box-shadow: 0 10px 30px rgba(2,132,199,0.1);
+        }
+
+        .welcome-card h1 { font-size: 26px; font-weight: 900; margin-bottom: 8px; }
+        .welcome-card p { color: #e0f2fe; font-size: 14px; font-weight: 500; max-width: 750px; line-height: 1.6; }
+
+        /* شريط فلاتر وعناقيد المناهج المطور للفرز الفوري */
+        .filter-wrapper {
+            max-width: 1200px;
+            width: 100%;
+            margin: 25px auto 0 auto;
+            padding: 0 20px;
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+        .filter-wrapper::-webkit-scrollbar { display: none; }
+
+        .filter-btn {
+            background: var(--bg-main);
+            border: 1px solid var(--border);
+            padding: 12px 22px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            transform: translateY(-1px);
+        }
+
+        /* وعاء عرض بطاقات الآيات والأمثلة المكثفة */
+        .grid-wrapper {
+            max-width: 1200px;
+            width: 100%;
+            margin: 25px auto 60px auto;
+            padding: 0 20px;
+        }
+
+        .lessons-pack-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 25px;
+        }
+
+        .lesson-group-card {
+            display: none;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .lesson-group-card.active { display: flex; animation: cardFadeUp 0.4s ease forwards; }
+        @keyframes cardFadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+        .card-meta-title {
+            font-size: 18px;
+            font-weight: 900;
+            color: var(--text-main);
+            border-right: 4px solid var(--primary);
+            padding-right: 12px;
+            margin-bottom: 5px;
+        }
+
+        .examples-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .example-line-row {
+            background: var(--bg-main);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 30px;
+            transition: all 0.2s ease;
+        }
+        .example-line-row:hover {
+            border-color: var(--primary);
+            box-shadow: 0 6px 15px rgba(2, 132, 199, 0.02);
+        }
+
+        .example-text-side {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            text-align: right;
+            flex-grow: 1;
+        }
+
+        .rule-specific-badge {
+            align-self: flex-start;
+            font-size: 11px;
+            font-weight: 800;
+            padding: 3px 10px;
+            border-radius: 20px;
+            background: var(--badge-bg);
+            color: var(--badge-text);
+        }
+
+        .quran-script-text {
+            font-family: 'Amiri', serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-main);
+            line-height: 1.8;
+            user-select: none;
+        }
+        .quran-script-text span.target-match {
+            color: var(--primary);
+            border-bottom: 2px dashed var(--primary);
+            padding: 0 4px;
+        }
+
+        /* تصميم زر الاستماع المدمج الصافي تحت أو بجانب الآية */
+        .audio-trigger-btn {
+            background: var(--bg-sub);
+            border: 1.5px solid var(--border);
+            color: var(--text-main);
+            padding: 10px 22px;
+            border-radius: 25px;
+            font-size: 13px;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+        .audio-trigger-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background-color: var(--bg-main);
+        }
+        .audio-trigger-btn.playing {
+            background-color: rgba(22, 163, 74, 0.08);
+            color: var(--success);
+            border-color: var(--success);
+        }
+    </style>
+    <script>
+        if (localStorage.getItem("talqi_authenticated") !== "true") {
+            window.location.href = "../index.html";
+        }
+        var savedPlatformRole = localStorage.getItem("talqi_role") || "student";
+    </script>
+</head>
+<body>
+
+    <div class="protected-shell" id="academy-shell">
+        <nav class="navbar">
+            <div class="nav-right-zone">
+                <button class="btn-back-hub" onclick="returnToProperDashboard()">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                    <span>لوحة التحكم</span>
+                </button>
+                <div class="nav-logo">منصة تَلَقَّىٰ | <span>رادار وعينات الأداء التجويدي</span></div>
+            </div>
+        </nav>
+
+        <div class="hero-banner">
+            <div class="welcome-card">
+                <h1>مكتبة المقارنات وعينات الأداء الذاتي</h1>
+                <p>مرحباً بكِ في رادار الأداء المطور. اقرئي الآيات الكريمة بقلب خاشع، ثم اضغطي على زر الاستماع لتسمعي الأداء السمعي الصحيح والمحقق لكل حكم من أحكام التلاوة لمطابقته ذاتيّاً وبكفاءة مطلقة.</p>
+            </div>
+        </div>
+
+        <div class="filter-wrapper">
+            <button class="filter-btn active" id="btn-group-qalqalah" onclick="switchRadarLessonGroup('qalqalah')">أحكام ومراتب القلقلة</button>
+            <button class="filter-btn" id="btn-group-noon" onclick="switchRadarLessonGroup('noon')">أحكام النون الساكنة والتنوين</button>
+            <button class="filter-btn" id="btn-group-meem" onclick="switchRadarLessonGroup('meem')">أحكام الميم الساكنة</button>
+            <button class="filter-btn" id="btn-group-lamat" onclick="switchRadarLessonGroup('lamat')">أحكام اللامات والراءات</button>
+        </div>
+
+        <main class="grid-wrapper">
+            <div class="lessons-pack-grid">
+
+                <div class="lesson-group-card active" id="group-qalqalah">
+                    <div class="card-meta-title">موسوعة أمثلة أحكام ومراتب القلقلة (قطب جد)</div>
+                    <div class="examples-list">
+                        
+                        <div class="example-line-row">
+                            <div class="example-text-side">
+                                <div class="rule-specific-badge">قلقلة كبرى مشددة موقوف عليها</div>
+                                <div class="quran-script-text">تَبَّتْ يَدَا أَبِي لَهَبٍ <span class="target-match">وَتَبَّ</span></div>
+                            </div>
+                            <button class="audio-trigger-btn" onclick="playRadarAyahSample('111001', this)">استماع الأداء ←</button>
+                        </div>
+
+                        <div class="example-line-row">
+                            <div class="example-text-side">
+                                <div class="rule-specific-badge">قلقلة وسطى ساكنة موقوف عليها</div>
+                                <div class="quran-script-text">قُلْ أَعُوذُ بِرَبِّ <span class="target-match">الْفَلَقِ</span></div>
+                            </div>
+                            <button class="audio-trigger-btn" onclick="playRadarAyahSample('113001', this)">استماع الأداء ←</button>
+                        </div>
+
+                        <div class="example-line-row">
+                            <div class="example-text-side">
+                                <div class="rule-specific-badge">قلقلة صغرى ساكنة في وسط الكلمة</div>
+                                <div class="quran-script-text">فِي <span class="target-match">جِيدِهَا</span> حَبْلٌ مِّن مَّسَدٍ</div>
+                            </div>
+                            <button class="audio-trigger-btn" onclick="playRadarAyahSample('111005', this)">استماع الأداء ←</button>
+                        </div>
+
+                        <div class="example-line-row">
+                            <div class="example-text-side">
+                                <div class="rule-specific-badge">قلقلة صغرى في الطاء الساكنة</div>
+                                <div class="quran-script-text">الَّذِي <span class="target-match">أَطْعَمَهُم</span> مِّن جُوعٍ</div>
+                            </div>
+                            <button class="audio-trigger-btn" onclick="playRadarAyahSample('106004', this)">استماع الأداء ←</button>
+                        </div>
+
+                        <div class="example-line-row">
+                            <div class="example-text-side">
+                                <div class="rule-specific-badge">قلقلة وسطى في الدال الموقوف عليها</div>
+                                <div class="quran-script-text">قُلْ هُوَ اللَّهُ <span class="target-match">أَحَدٌ</span></div>
+                            </div>
+                            <button class="audio-trigger-btn" onclick="playRadarAyahSample('112001', this)">استماع الأداء ←</button>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="lesson-group-card" id="group-noon">
+                    <div class="card-meta-title">موسوعة أمثلة النون الساكنة والتنوين (الإظهار، الإدغام، الإخفاء، الإقلاب)</div>
+                    <div class="examples-list">
+                        
+                        <div class="example-line-row">
+                            <div class="example-text-side">
+                                <div class="rule-specific-badge">إدغام كامل بدون غنة (نون في اللام)</div>
+                                <div class="quran-script-text">أَن رَّآهُ <span class="target-match">اسْتَغْنَىٰ</span></div>
+                            </div>
+                            <button class="audio-trigger-btn" onclick="playRadarAyahSample('096007', this)">استماع الأداء ←</button>
+                        </div>
+
+                        <div class="example-line-row">
+                            <div class="example-text-side">
+                                <div class="rule-specific-badge">إظهار حلقي (نون ساكنة عند الهاء)</div>
+                                <div class="quran-script-text">تَنزِيلٌ مِّنْ <span class="target-match">حَكِيمٍ</span> حَمِيدٍ</div>
+                            </div>
+                            <button class="audio-trigger-btn" onclick="playRadarAyahSample('041042', this)">استماع الأداء ←</button>
+                        </div>
+
+                        <div class="example-line-row">
+                            <div class="example-text-side">
+                                <div class="rule-specific-badge">حكم الإقلاب (قلب النون ميماً مخفاة)</div>
+                                <div class="quran-script-text">كَلَّا ۖ لَيُنبَذَنَّ فِي <span class="target-match">الْحُطَمَةِ</span></div>
+                            </div>
+                            <button class="audio-trigger-btn" onclick="playRadarAyahSample('104004', this)">استماع الأداء ←</button>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="lesson-group-card" id="group-meem">
+                    <div class="card-meta-title">موسوعة عينات أحكام الميم الساكنة المظهرة والمدغمة والمخفاة</div>
+                    <div class="examples-list">
+                        
+                        <div class="example-line-row">
+                            <div class="example-text-side">
+                                <div class="rule-specific-badge">إخفاء شفوي (ميم ساكنة عند الباء بغنة)</div>
+                                <div class="quran-script-text">تَرْمِيهِم <span class="target-match">بِحِجَارَةٍ</span> مِّن سِجِّيلٍ</div>
+                            </div>
+                            <button class="audio-trigger-btn" onclick="playRadarAyahSample('105004', this)">استماع الأداء ←</button>
+                        </div>
+
+                        <div class="example-line-row">
+                            <div class="example-text-side">
+                                <div class="rule-specific-badge">إظهار شفوي شديد (ميم ساكنة عند الواو)</div>
+                                <div class="quran-script-text">لَكُمْ دِينُكُمْ <span class="target-match">وَلِيَ</span> دِينِ</div>
+                            </div>
+                            <button class="audio-trigger-btn" onclick="playRadarAyahSample('109006', this)">استماع الأداء ←</button>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="lesson-group-card" id="group-lamat">
+                    <div class="card-meta-title">موسوعة أحكام اللام القمرية والشمسية وتفخيم الراءات</div>
+                    <div class="examples-list">
+                        
+                        <div class="example-line-row">
+                            <div class="example-text-side">
+                                <div class="rule-specific-badge">لام شمسية مدغمة وجوباً</div>
+                                <div class="quran-script-text">وَ<span class="target-match">السَّمَاءِ</span> وَالطَّارِقِ</div>
+                            </div>
+                            <button class="audio-trigger-btn" onclick="playRadarAyahSample('086001', this)">استماع الأداء ←</button>
+                        </div>
+
+                        <div class="example-line-row">
+                            <div class="example-text-side">
+                                <div class="rule-specific-badge">تفخيم الراء المفتوحة المشددة</div>
+                                <div class="quran-script-text">بِسْمِ اللَّهِ <span class="target-match">الرَّحْمَٰنِ</span> الرَّحِيمِ</div>
+                            </div>
+                            <button class="audio-trigger-btn" onclick="playRadarAyahSample('001001', this)">استماع الأداء ←</button>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.getElementById('academy-shell').style.display = 'flex';
+
+        var activeRadarAudio = null;
+        var activeBtnElement = null;
+
+        // محرك تشغيل وبث العينات الصوتية المباشرة والمحققة بدقة من سيرفر EveryAyah المفتوح
+        function playRadarAyahSample(ayahKey, btnElement) {
+            if (activeRadarAudio) {
+                activeRadarAudio.pause();
+                if(activeBtnElement) {
+                    activeBtnElement.classList.remove('playing');
+                    activeBtnElement.innerText = "استماع الأداء ←";
+                }
+            }
+
+            let surahNum = ayahKey.substring(0, 3);
+            let ayahNum = ayahKey.substring(3, 6);
+            let audioUrl = `https://everyayah.com/data/Husary_128kbps/${surahNum}${ayahNum}.mp3`;
+
+            activeRadarAudio = new Audio(audioUrl);
+            activeBtnElement = btnElement;
+            
+            activeBtnElement.classList.add('playing');
+            activeBtnElement.innerText = "جاري البث والترتيل...";
+
+            activeRadarAudio.addEventListener('ended', () => {
+                activeBtnElement.classList.remove('playing');
+                activeBtnElement.innerText = "استماع الأداء ←";
+            });
+
+            activeRadarAudio.play().catch(e => {
+                console.log("خطأ في بث الصوت المرجعي");
+                activeBtnElement.classList.remove('playing');
+                activeBtnElement.innerText = "استماع الأداء ←";
+            });
+        }
+
+        // التبديل الحركي العضوي الناعم بين مجموعات عينات الأحكام الـ 22
+        function switchRadarLessonGroup(groupId) {
+            if (activeRadarAudio) {
+                activeRadarAudio.pause();
+                if(activeBtnElement) {
+                    activeBtnElement.classList.remove('playing');
+                    activeBtnElement.innerText = "استماع الأداء ←";
+                }
+            }
+
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.lesson-group-card').forEach(card => card.classList.remove('active'));
+
+            document.getElementById('btn-group-' + groupId).classList.add('active');
+            document.getElementById('group-' + groupId).classList.add('active');
+        }
+
+        // محرك العودة الآمن المقاوم للكراش: يعيد الطالبة للوحة الصحيحة التي انطلقت منها بدقة هندسية حتمية
+        function returnToProperDashboard() {
+            if (activeRadarAudio) { activeRadarAudio.pause(); }
+            if (savedPlatformRole === "teacher_samia") {
+                window.location.href = "../dar_kholod/dashboard-kholod.html";
+            } else if (savedPlatformRole === "teacher_eman") {
+                window.location.href = "../eman_academy/dashboard-eman.html";
+            } else {
+                window.location.href = "dashboard.html";
+            }
+        }
+    </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title></title>
+</head>
+
+<body>
+  
+</body>
+
+</html>
